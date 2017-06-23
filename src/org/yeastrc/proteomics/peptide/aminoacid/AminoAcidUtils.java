@@ -34,7 +34,7 @@ public class AminoAcidUtils {
 			case 'Y' : aa = TYROSINE; break;
 			case 'V' : aa = VALINE; break;
 			case 'O' : aa = PYRROLYSINE; break;
-			default : throw new IllegalArgumentException( "Unknown amino acid residue: " + residue );
+			default : throw new InvalidAminoAcidException( "Unknown amino acid residue: " + residue );
 		}
 		
 		return aa;
@@ -74,7 +74,7 @@ public class AminoAcidUtils {
 			case "tyr" : aa = TYROSINE; break;
 			case "val" : aa = VALINE; break;
 			case "pyl" : aa = PYRROLYSINE; break;
-			default : throw new IllegalArgumentException( "Unknown amino acid abbreviation: " + abbr );
+			default : throw new InvalidAminoAcidException( "Unknown amino acid abbreviation: " + abbr );
 		}
 		
 		return aa;
@@ -114,7 +114,7 @@ public class AminoAcidUtils {
 			case "tyrosine" : aa = TYROSINE; break;
 			case "valine" : aa = VALINE; break;
 			case "pyrrolysine" : aa = PYRROLYSINE; break;
-			default : throw new IllegalArgumentException( "Unknown amino acid abbreviation." );
+			default : throw new InvalidAminoAcidException( "Unknown amino acid abbreviation." );
 		}
 		
 		return aa;
