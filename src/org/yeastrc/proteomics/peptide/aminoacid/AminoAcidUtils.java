@@ -34,7 +34,7 @@ public class AminoAcidUtils {
 			case 'Y' : aa = TYROSINE; break;
 			case 'V' : aa = VALINE; break;
 			case 'O' : aa = PYRROLYSINE; break;
-			default : throw new IllegalArgumentException( "Unknown amino acid residue." );
+			default : throw new IllegalArgumentException( "Unknown amino acid residue: " + residue );
 		}
 		
 		return aa;
