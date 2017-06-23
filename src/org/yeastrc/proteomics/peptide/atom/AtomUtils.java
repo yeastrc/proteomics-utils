@@ -7,6 +7,7 @@ public class AtomUtils {
 	public static final Atom ATOM_NITROGEN = new Nitrogen();
 	public static final Atom ATOM_OXYGEN = new Oxygen();
 	public static final Atom ATOM_PROTON = new Proton();
+	public static final Atom ATOM_NEUTRON = new Neutron();
 	
 	/**
 	 * Get the atom corresponding to the supplied symbol
@@ -23,6 +24,7 @@ public class AtomUtils {
 			case 'N' : retAtom = ATOM_NITROGEN; break;
 			case 'O' : retAtom = ATOM_OXYGEN; break;
 			case 'p' : retAtom = ATOM_PROTON; break;
+			case 'n' : retAtom = ATOM_NEUTRON; break;
 			
 			default: throw new IllegalArgumentException( "Unsupported atomic symbol: " + symbol );
 		}
