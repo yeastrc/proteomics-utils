@@ -2,23 +2,23 @@ package org.yeastrc.proteomics.peptide.atom;
 
 import org.yeastrc.proteomics.mass.MassUtils;
 
-public class Oxygen implements Atom {
+public class Selenium implements Atom {
 
 	@Override
 	public double getMass(int massType) throws Exception {
 
 		if( massType == MassUtils.MASS_TYPE_MONOISOTOPIC )
-			return 15.99491461956;
+			return 79.916519;
 		
 		if( massType == MassUtils.MASS_TYPE_AVERAGE )
-			return 15.9994;
+			return 78.960;
 		
 		throw new IllegalArgumentException( "Invalid mass type." );
 	}
 
 	@Override
 	public String getSymbol() {
-		return "O";
+		return "Se";
 	}
 
 }

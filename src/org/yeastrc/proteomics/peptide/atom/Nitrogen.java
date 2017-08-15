@@ -17,8 +17,8 @@ public class Nitrogen implements Atom {
 	}
 
 	@Override
-	public char getSymbol() {
-		return 'N';
+	public String getSymbol() {
+		return "N";
 	}
 
 }

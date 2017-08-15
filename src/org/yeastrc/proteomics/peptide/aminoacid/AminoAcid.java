@@ -1,5 +1,9 @@
 package org.yeastrc.proteomics.peptide.aminoacid;
 
+import java.util.Map;
+
+import org.yeastrc.proteomics.peptide.atom.Atom;
+
 public interface AminoAcid {
 
 	/**
@@ -29,5 +33,18 @@ public interface AminoAcid {
 	 */
 	public String getName();
 	
+	/**
+	 * Get the molecular formula of this amino acid.
+	 * @return
+	 */
+	public String getMolecularFormula();
+	
+	/**
+	 * Get a map of each distinct atom and count of those atoms in the
+	 * molecular formula for this amino acid.
+	 * 
+	 * @return
+	 */
+	public Map<Atom, Integer> getParsedAtomCount();
 	
 }

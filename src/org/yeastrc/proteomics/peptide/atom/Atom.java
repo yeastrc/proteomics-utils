@@ -4,6 +4,6 @@ public interface Atom {
 
 	public double getMass( int massType ) throws Exception;
 	
-	public char getSymbol();
+	public String getSymbol();
 	
 }

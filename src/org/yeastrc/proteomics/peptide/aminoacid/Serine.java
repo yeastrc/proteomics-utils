@@ -1,6 +1,12 @@
 package org.yeastrc.proteomics.peptide.aminoacid;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.yeastrc.proteomics.mass.MassUtils;
+import org.yeastrc.proteomics.peptide.atom.Atom;
+import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 
 public class Serine implements AminoAcid {
 
@@ -31,6 +37,24 @@ public class Serine implements AminoAcid {
 	@Override
 	public String getName() {
 		return "serine";
+	}
+	
+	@Override
+	public String getMolecularFormula() {
+		return "C3H7NO3";
+	}
+	
+	@Override
+	public Map<Atom, Integer> getParsedAtomCount() {
+		
+		Map<Atom,Integer> atomCount = new HashMap<>();
+		
+		atomCount.put( AtomUtils.ATOM_CARBON, 3 );
+		atomCount.put( AtomUtils.ATOM_HYDROGEN, 7 );
+		atomCount.put( AtomUtils.ATOM_NITROGEN, 1 );
+		atomCount.put( AtomUtils.ATOM_OXYGEN, 3 );
+		
+		return Collections.unmodifiableMap( atomCount );
 	}
 
 }

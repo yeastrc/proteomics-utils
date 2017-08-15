@@ -17,8 +17,8 @@ public class Hydrogen implements Atom {
 	}
 
 	@Override
-	public char getSymbol() {
-		return 'H';
+	public String getSymbol() {
+		return "H";
 	}
 
 }

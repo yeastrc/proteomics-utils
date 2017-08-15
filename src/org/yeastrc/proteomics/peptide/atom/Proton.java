@@ -17,8 +17,8 @@ public class Proton implements Atom {
 	}
 
 	@Override
-	public char getSymbol() {
-		return 'p';
+	public String getSymbol() {
+		return "p";
 	}
 
 }

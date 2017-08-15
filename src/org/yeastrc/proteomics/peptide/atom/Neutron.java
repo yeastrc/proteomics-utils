@@ -17,8 +17,8 @@ public class Neutron implements Atom {
 	}
 
 	@Override
-	public char getSymbol() {
-		return 'n';
+	public String getSymbol() {
+		return "n";
 	}
 
 }

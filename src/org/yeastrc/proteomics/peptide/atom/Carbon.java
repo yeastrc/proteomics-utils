@@ -17,8 +17,8 @@ public class Carbon implements Atom {
 	}
 
 	@Override
-	public char getSymbol() {
-		return 'C';
+	public String getSymbol() {
+		return "C";
 	}
 
 }
