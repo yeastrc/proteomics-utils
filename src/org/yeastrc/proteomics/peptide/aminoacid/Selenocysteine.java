@@ -53,7 +53,7 @@ public class Selenocysteine implements AminoAcid {
 		atomCount.put( AtomUtils.ATOM_HYDROGEN, 7 );
 		atomCount.put( AtomUtils.ATOM_NITROGEN, 1 );
 		atomCount.put( AtomUtils.ATOM_OXYGEN, 2 );
-		atomCount.put( AtomUtils.ATOM_SELENIUM, 2 );
+		atomCount.put( AtomUtils.ATOM_SELENIUM, 1 );
 		
 		return Collections.unmodifiableMap( atomCount );
 	}
