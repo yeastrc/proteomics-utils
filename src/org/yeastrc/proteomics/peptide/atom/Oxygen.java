@@ -2,7 +2,7 @@ package org.yeastrc.proteomics.peptide.atom;
 
 import org.yeastrc.proteomics.mass.MassUtils;
 
-public class Oxygen implements Atom {
+public class Oxygen extends Atom {
 
 	@Override
 	public double getMass(int massType) throws Exception {

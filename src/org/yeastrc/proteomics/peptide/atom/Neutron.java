@@ -2,7 +2,7 @@ package org.yeastrc.proteomics.peptide.atom;
 
 import org.yeastrc.proteomics.mass.MassUtils;
 
-public class Neutron implements Atom {
+public class Neutron extends Atom {
 
 	@Override
 	public double getMass(int massType) throws Exception {
