@@ -4,8 +4,11 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.yeastrc.proteomics.modifications.types.Modification;
+import org.yeastrc.proteomics.peptide.aminoacid.AminoAcid;
 import org.yeastrc.proteomics.peptide.aminoacid.AminoAcidUtils;
+import org.yeastrc.proteomics.peptide.atom.Atom;
 import org.yeastrc.proteomics.peptide.atom.AtomUtils;
+import org.yeastrc.proteomics.peptide.isotope_label.IsotopeLabel;
 
 /**
  * A Peptide is a peptide sequence and modifications
@@ -28,6 +31,17 @@ public class Peptide {
 		mass += AtomUtils.ATOM_OXYGEN.getMass( massType );
 		mass += 2 * AtomUtils.ATOM_HYDROGEN.getMass( massType );
 		
+		// if H or O is labeled, include that
+		if( this.getLabel() != null ) {
+			
+			if( this.getLabel().getLabeledAtom().equals( AtomUtils.ATOM_HYDROGEN ) )
+				mass += 2 * this.getLabel().getMassChange();
+			
+			else if( this.getLabel().getLabeledAtom().equals( AtomUtils.ATOM_OXYGEN ) )
+				mass += this.getLabel().getMassChange();
+			
+		}
+		
 		return mass;
 	}
 	
@@ -42,7 +56,14 @@ public class Peptide {
 		String s = this.getSequence();
 		
 		for (int i = 0; i < s.length(); i++){
-		    mass += AminoAcidUtils.getAminoAcidBySymbol( s.charAt(i) ).getMass( massType );
+			
+			AminoAcid residue = AminoAcidUtils.getAminoAcidBySymbol( s.charAt(i) );
+			
+		    mass += residue.getMass( massType );
+		    
+		    // adjust mass for label if it is present
+		    if( this.getLabel() != null )
+		    	mass += this.getLabelMassModForResidue( residue, this.getLabel() );
 		}
 		
 		// add the mass of any modifications to this mass
@@ -54,6 +75,27 @@ public class Peptide {
 			}			
 		}
 
+		return mass;
+	}
+
+	/**
+	 * Get the mass shift caused by the presence of a stable isotope label on one of the atoms
+	 * composing this residue.
+	 * 
+	 * @param residue
+	 * @param label
+	 * @return
+	 * @throws Exception
+	 */
+	private double getLabelMassModForResidue( AminoAcid residue, IsotopeLabel label ) throws Exception {
+	
+		double mass = 0.0;
+		
+		Atom labeledAtom = label.getLabeledAtom();
+		int atomCount = residue.getParsedAtomCount().get( labeledAtom );	// the number of labeled atoms
+		
+		mass = (double)atomCount * label.getMassChange();
+		
 		return mass;
 	}
 	
@@ -83,9 +125,18 @@ public class Peptide {
 	public void setModification( Map<Integer, Collection<Modification>> mods ) {
 		this.modifications = mods;
 	}
-	
+		
+	public IsotopeLabel getLabel() {
+		return label;
+	}
+
+	public void setLabel(IsotopeLabel label) {
+		this.label = label;
+	}
+
 	private final String sequence;
 	private Map<Integer, Collection<Modification>> modifications;
+	private IsotopeLabel label;
 	
 	/**
 	 * Get an instance of a peptide with the supplied attributes
