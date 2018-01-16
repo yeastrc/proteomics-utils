@@ -92,7 +92,13 @@ public class Peptide {
 		double mass = 0.0;
 		
 		Atom labeledAtom = label.getLabeledAtom();
-		int atomCount = residue.getParsedAtomCount().get( labeledAtom );	// the number of labeled atoms
+		Integer atomCount = residue.getParsedAtomCount().get( labeledAtom );	// the number of labeled atoms
+		
+		// residue does not contained the labeled atom? weird.
+		if( atomCount == null || atomCount == 0 )
+			return 0.0;
+
+		
 		
 		mass = (double)atomCount * label.getMassChange();
 		
