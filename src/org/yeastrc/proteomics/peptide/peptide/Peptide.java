@@ -31,17 +31,6 @@ public class Peptide {
 		mass += AtomUtils.ATOM_OXYGEN.getMass( massType );
 		mass += 2 * AtomUtils.ATOM_HYDROGEN.getMass( massType );
 		
-		// if H or O is labeled, include that
-		if( this.getLabel() != null ) {
-			
-			if( this.getLabel().getLabeledAtom().equals( AtomUtils.ATOM_HYDROGEN ) )
-				mass += 2 * this.getLabel().getMassChange();
-			
-			else if( this.getLabel().getLabeledAtom().equals( AtomUtils.ATOM_OXYGEN ) )
-				mass += this.getLabel().getMassChange();
-			
-		}
-		
 		return mass;
 	}
 	
