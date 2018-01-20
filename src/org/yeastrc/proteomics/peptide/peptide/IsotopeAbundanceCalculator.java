@@ -14,7 +14,6 @@ import org.yeastrc.proteomics.peptide.aminoacid.AminoAcidUtils;
 import org.yeastrc.proteomics.peptide.atom.Atom;
 import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 import org.apache.commons.math3.util.ArithmeticUtils;
-import org.apache.commons.math3.util.MathUtils;
 
 public class IsotopeAbundanceCalculator {
 
@@ -73,18 +72,27 @@ public class IsotopeAbundanceCalculator {
 	 */
 	public Collection< IsotopeMassShiftProbability > getIsotopMassShiftProbabilities( Peptide peptide, int limit ) throws Exception {
 		
+		System.out.println( "\tStarting getIsotopMassShiftProbabilities()." );
+		
 		Collection<IsotopeMassShiftProbability> massShiftProbabilities = new HashSet<>();
-		BigDecimal currentLowestProbability = null;
 		
 		// get the count for each atom for the entire peptide
 		Map< Atom, Integer > atomCount = getAtomCountForPeptide( peptide );
+		
+		for( Atom a : atomCount.keySet() ) {
+			System.out.println( "\t\t" + a.getSymbol() + ":" + atomCount.get( a ) );
+		}
+		
 		
 		// lock in an order for the atoms
 		List<Atom> atomList = new ArrayList<>();
 		atomList.addAll( atomCount.keySet() );
 		
 		
-		processElementInList( atomList, atomCount, new Integer( 0 ), getBigDecimal( 1.0 ), getBigDecimal( 0.0 ), massShiftProbabilities, currentLowestProbability, limit );
+		processElementInList( atomList, atomCount, new Integer( 0 ), getBigDecimal( 1.0 ), getBigDecimal( 0.0 ), massShiftProbabilities, limit );
+		
+		System.out.println( "\tEnding getIsotopMassShiftProbabilities().\n\n" );
+
 		
 		return massShiftProbabilities;
 	}
@@ -103,31 +111,43 @@ public class IsotopeAbundanceCalculator {
 									BigDecimal currentProbability,
 									BigDecimal currentMassShift,
 									Collection<IsotopeMassShiftProbability> massShiftProbabilities,
-									BigDecimal currentLowestProbability,
 									int limit
 								 ) {
 		
-		// no need to process any possibilities if we're already below our cutoff
-		if( currentProbability.compareTo( _PROBABILITY_CUTOFF ) < 0 )
-			return;
+		System.out.println( "\n\t\tStarting processElementInList()." );
+
 		
 		Atom atom = atomList.get( index );
 		
+		System.out.println( "\t\t\tatom: " + atom.getSymbol() );
+
+		
 		BigDecimal probabilitySumForElement = getTotalProbabilityForAllIsotopesForElement( _ATOMIC_MASS_SHIFT_PROBABILITIES.get( atom ) );
+		System.out.println( "\t\t\tprobabilitySumForElement: " + probabilitySumForElement );
+
 		
-		
-		// iterate over the number of possible isotopes of this particular element ( 0 .. # of atoms for this element )
+		// iterate over number of times this element exists in this peptide
 		for( int numberOfAtomsWithMassDiff = 0; numberOfAtomsWithMassDiff <= atomCount.get( atom ); numberOfAtomsWithMassDiff++ ) {
-			
+						
 			// get the exact probability of this number of atoms having any isotope mass shift
 			double p = getProbability( numberOfAtomsWithMassDiff, atomCount.get( atom ), probabilitySumForElement.doubleValue() );
+			
+			//System.out.println( "\t\t\tp: " + p );
 			
 			BigDecimal probabilityOfAnyMassShiftForElement = getBigDecimal( p );
 			BigDecimal probabilityOfNoMassShiftForElement = getBigDecimal( 1.0 ).subtract( probabilityOfAnyMassShiftForElement );
 			
+			//System.out.println( "\t\t\tprobabilityOfAnyMassShiftForElement: " + probabilityOfAnyMassShiftForElement );
+			//System.out.println( "\t\t\tprobabilityOfNoMassShiftForElement: " + probabilityOfNoMassShiftForElement );
+
+			
 			BigDecimal cumulativeProbabilityForAnyMassShift = currentProbability.multiply( probabilityOfAnyMassShiftForElement );
 			BigDecimal cumulativeProbabilityForNoMassShift = currentProbability.multiply( probabilityOfNoMassShiftForElement );
 
+			//System.out.println( "\t\t\tcumulativeProbabilityForAnyMassShift: " + cumulativeProbabilityForAnyMassShift );
+			//System.out.println( "\t\t\tcumulativeProbabilityForNoMassShift: " + cumulativeProbabilityForNoMassShift );
+
+			
 			
 			if( numberOfAtomsWithMassDiff == 0 ) {
 				
@@ -137,22 +157,20 @@ public class IsotopeAbundanceCalculator {
 				}
 				
 				// no need to continue this further if current list is full and minimum probability is greater than this
-				if( massShiftProbabilities.size() >= limit && currentLowestProbability.compareTo( cumulativeProbabilityForNoMassShift ) > 0 )
+				if( massShiftProbabilities.size() >= limit && getCurrentLowestProbability( massShiftProbabilities ).compareTo( cumulativeProbabilityForNoMassShift ) > 0 )
 					continue;
 				
 				// if we're at the end of the element list, we can add this to our master list
-				if( index >= atomList.size() ) {
-					addToMassShiftProbabilities( cumulativeProbabilityForNoMassShift, currentMassShift, massShiftProbabilities, limit, currentLowestProbability );
+				if( index >= atomList.size() - 1 ) {
+					addToMassShiftProbabilities( cumulativeProbabilityForNoMassShift, currentMassShift, massShiftProbabilities, limit );
 					continue;
 				}
 				
 				// process the next element
-				processElementInList( atomList, atomCount, index + 1, cumulativeProbabilityForNoMassShift, currentMassShift, massShiftProbabilities, currentLowestProbability, limit );
+				processElementInList( atomList, atomCount, index + 1, cumulativeProbabilityForNoMassShift, currentMassShift, massShiftProbabilities, limit );
 				continue;				
 			}
-
 			
-			// there is at least one mass shift to consider
 			
 			// no need to go on: we're below the probability cutoff
 			if( cumulativeProbabilityForAnyMassShift.compareTo( _PROBABILITY_CUTOFF ) < 0 ) {
@@ -160,19 +178,105 @@ public class IsotopeAbundanceCalculator {
 			}
 			
 			// no need to continue this further if current list is full and minimum probability is greater than this
-			if( massShiftProbabilities.size() >= limit && currentLowestProbability.compareTo( cumulativeProbabilityForAnyMassShift ) > 0 )
+			if( massShiftProbabilities.size() >= limit && getCurrentLowestProbability( massShiftProbabilities ).compareTo( cumulativeProbabilityForAnyMassShift ) > 0 )
 				continue;
 			
 			// process all combinations of mass shifts for this element and this number of mass shifts
 			
-
+			List<BigDecimal> massShiftsForElement = new ArrayList<>();
+			massShiftsForElement.addAll( _ATOMIC_MASS_SHIFT_PROBABILITIES.get( atom ).keySet() );
 			
-		}
+			processElementMassShiftsForCount( numberOfAtomsWithMassDiff, 0, massShiftsForElement, atomList, atomCount, index, currentProbability, currentMassShift, massShiftProbabilities, limit);			
+			
+
+		}// end iterating over number of mass modifications for this elements' atoms
 		
-		
+		System.out.println( "\t\tEnding processElementInList().\n\n" );
+
 		
 	}
 
+	
+	private void processElementMassShiftsForCount (
+			int numberOfAtomsWithMassShift,
+			int elementIsotopeIndex,
+			List<BigDecimal> massShiftsForElement,
+			List<Atom> atomList,
+			Map< Atom, Integer > atomCount,
+			Integer index,
+			BigDecimal currentProbability,
+			BigDecimal currentMassShift,
+			Collection<IsotopeMassShiftProbability> massShiftProbabilities,
+			int limit
+		 ) {
+
+		Atom thisElement = atomList.get( index );
+		BigDecimal thisMassShift = massShiftsForElement.get( elementIsotopeIndex );
+		BigDecimal thisIsotopeProbability = _ATOMIC_MASS_SHIFT_PROBABILITIES.get( thisElement ).get( thisMassShift );
+		
+		for( int count = 0; count <= numberOfAtomsWithMassShift; count++ ) {
+			
+			double p = getProbability( count, atomCount.get( thisElement ), thisIsotopeProbability.doubleValue() );
+			BigDecimal probabilityOfCountShifts = getBigDecimal( p );
+
+			BigDecimal cumulativeProbability = currentProbability.multiply( probabilityOfCountShifts );
+			
+			// no need to go on: we're below the probability cutoff
+			if( cumulativeProbability.compareTo( _PROBABILITY_CUTOFF ) < 0 ) {
+				continue;
+			}
+			
+			// no need to continue this further if current list is full and minimum probability is greater than this
+			if( massShiftProbabilities.size() >= limit && getCurrentLowestProbability( massShiftProbabilities ).compareTo( cumulativeProbability ) > 0 )
+				continue;
+			
+			BigDecimal cumulativeMassShift = currentMassShift;
+			System.out.println( cumulativeMassShift );
+
+			if( count != 0 ) {
+				System.out.println( cumulativeMassShift );
+				
+				cumulativeMassShift = cumulativeMassShift.multiply( getBigDecimal( (double)count ) );			
+				System.out.println( cumulativeMassShift );
+
+				
+				cumulativeMassShift = cumulativeMassShift.add( thisMassShift );
+				System.out.println( cumulativeMassShift );
+			}
+
+
+			
+			// if we're on the last mass shift for this atom, add it to the list
+			if( elementIsotopeIndex >= massShiftsForElement.size() - 1 ) {
+
+				// we're also on the last element
+				if( index >= atomList.size() - 1 ) {
+					addToMassShiftProbabilities( cumulativeProbability, cumulativeMassShift, massShiftProbabilities, limit );
+					continue;
+				} else {
+					// move on to the next element
+					processElementInList( atomList, atomCount, index + 1, cumulativeProbability, cumulativeMassShift, massShiftProbabilities, limit );
+					continue;
+				}
+
+			}
+			
+			processElementMassShiftsForCount( numberOfAtomsWithMassShift, elementIsotopeIndex + 1, massShiftsForElement, atomList, atomCount, index, cumulativeProbability, cumulativeMassShift, massShiftProbabilities, limit);			
+		}		
+	}
+	
+	
+	
+	
+	BigDecimal getCurrentLowestProbability( Collection<IsotopeMassShiftProbability> massShiftProbabilities ) {
+		BigDecimal min = null;
+		for( IsotopeMassShiftProbability sp : massShiftProbabilities ) {
+			if( min == null || sp.getProbability().compareTo( min ) < 0 )
+				min = sp.getProbability();
+		}
+		return min;
+	}
+	
 	/**
 	 * Add the probability and mass shift to the collection of mass shift probabilities we're making
 	 * 
@@ -183,14 +287,21 @@ public class IsotopeAbundanceCalculator {
 	 * @param currentLowestProbability
 	 * @return
 	 */
-	private BigDecimal addToMassShiftProbabilities( BigDecimal probability,
+	private void addToMassShiftProbabilities( BigDecimal probability,
 													BigDecimal currentMassShift,
 													Collection<IsotopeMassShiftProbability> massShiftProbabilities,
-													int limit,
-													BigDecimal currentLowestProbability ) {
+													int limit ) {
 		
 		IsotopeMassShiftProbability imsp = new IsotopeMassShiftProbability( currentMassShift, probability );
 
+		
+			///System.out.println( "Calling addToMassShiftProbabilities() with: " );
+			///System.out.println( "\tprobability: " + probability );
+			///System.out.println( "\tcurrentMassShift: " + currentMassShift );
+		
+		
+			BigDecimal currentLowestProbability = getCurrentLowestProbability( massShiftProbabilities );
+		
 			/*
 			 * If the collection isn't full, add this to it and note the new lowest probability in
 			 * the collection
@@ -198,10 +309,7 @@ public class IsotopeAbundanceCalculator {
 			if( massShiftProbabilities.size() < limit ) {
 				massShiftProbabilities.add( imsp );
 				
-				if( currentLowestProbability.compareTo( probability ) < 0 )
-					return currentLowestProbability;
-				else
-					return probability;
+				return;
 			}
 			
 			
@@ -210,13 +318,13 @@ public class IsotopeAbundanceCalculator {
 			
 			// if the lowest probability is greater than this one, then there is nothing to do.
 			if( currentLowestProbability.compareTo( probability ) > 0 )
-				return currentLowestProbability;
+				return;
 		
 
 			// if the lowest probability and this probability are the same just add this one
 			if( currentLowestProbability.compareTo( probability ) == 0 ) {
 				massShiftProbabilities.add( imsp );
-				return currentLowestProbability;
+				return;
 			}
 			
 			
@@ -232,21 +340,12 @@ public class IsotopeAbundanceCalculator {
 			
 			// if removing these items would shrink the list below the limit, don't remove them
 			if( massShiftProbabilities.size() - itemsToRemove.size() < limit )
-				return currentLowestProbability;
+				return;
 			
 			// remove items
 			for( IsotopeMassShiftProbability sp : itemsToRemove ) {
 				massShiftProbabilities.remove( sp );
 			}
-			
-			// find new min
-			BigDecimal newMin = null;
-			for( IsotopeMassShiftProbability sp : massShiftProbabilities ) {
-				if( newMin == null || sp.getProbability().compareTo( newMin ) < 0 )
-					newMin = sp.getProbability();
-			}		
-		
-		    return newMin;
 	}
 	
 	
@@ -258,11 +357,21 @@ public class IsotopeAbundanceCalculator {
 	 */
 	BigDecimal getTotalProbabilityForAllIsotopesForElement( Map<BigDecimal, BigDecimal> elementMap ) {
 		
+		//System.out.println( "\n\n\t\t\tStarting getTotalProbabilityForAllIsotopesForElement()." );
+
+		
 		BigDecimal sum = getBigDecimal( 0.0 );
 		
 		for( BigDecimal massShift : elementMap.keySet() ) {
-			sum.add( elementMap.get( massShift ) );
+			//System.out.println( "\t\t\tmassshift: " + massShift );
+			//System.out.println( "\t\t\tprobability: " + elementMap.get( massShift )  );
+
+			sum = sum.add( elementMap.get( massShift ) );
+			//System.out.println( "\t\t\tsum: " + sum );
 		}
+		
+		//System.out.println( "\n\n\t\t\tEnding getTotalProbabilityForAllIsotopesForElement().\n\n" );
+
 		
 		return sum;
 		
@@ -298,6 +407,11 @@ public class IsotopeAbundanceCalculator {
 			}
 		}
 
+		// remove a H2O for each bond between amino acids.
+		atomCountMap.put( AtomUtils.ATOM_OXYGEN, atomCountMap.get( AtomUtils.ATOM_OXYGEN ) - ( s.length() - 1 ) );
+		atomCountMap.put( AtomUtils.ATOM_HYDROGEN, atomCountMap.get( AtomUtils.ATOM_HYDROGEN ) - ( ( s.length() - 1 ) * 2 ) );
+
+		
 		return atomCountMap;
 	}
 	
@@ -308,7 +422,7 @@ public class IsotopeAbundanceCalculator {
 	 * @return
 	 */
 	private static BigDecimal getBigDecimal( double d ) {
-		return new BigDecimal( 1E-6, MathContext.DECIMAL64);
+		return new BigDecimal( d, MathContext.DECIMAL64 );
 	}
 	
 	
