@@ -33,7 +33,7 @@ public class IsotopeAbundanceCalculator {
 	/**
 	 * The probability below which no isotope mass shifts will be considered
 	 */
-	private static final double _PROBABILITY_CUTOFF = 1E-9;
+	private static final double _DEFAULT_PROBABILITY_CUTOFF = 1E-5;
 	
 	
 	/**
@@ -109,14 +109,18 @@ public class IsotopeAbundanceCalculator {
 	 * @param peptides A collection of peptides we are processing which should be part of the same ion (e.g. a pair of cross-linked peptides)
 	 * @param charge The charge of the identified ion (so that we may add the appropriate number of extra Hydrogens into the calculation) Note
 	 * 				 that the returned values are NOT divided by this value.
+	 * @param probabilityCutoff The proability, below which, isotopes will not be considered. The higher this value, the faster this runs.
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<BigDecimal, Double> getIsotopMassShiftProbabilities( Collection< Peptide > peptides, Integer charge ) throws Exception {
+	public Map<BigDecimal, Double> getIsotopMassShiftProbabilities( Collection< Peptide > peptides, Integer charge, Double probabilityCutoff ) throws Exception {
 		
 		if( charge != null && charge < 0 ) {
 			throw new Exception( "Charge must be >= 0." );
 		}
+		
+		if( probabilityCutoff == null )
+			probabilityCutoff = _DEFAULT_PROBABILITY_CUTOFF;
 				
 		Map<BigDecimal, Double> massShiftProbabilities = new HashMap<>();
 		
@@ -131,23 +135,32 @@ public class IsotopeAbundanceCalculator {
 		}
 		
 		// start with carbon
-		processCarbon( atomCount, massShiftProbabilities );		
+		processCarbon( atomCount, massShiftProbabilities, probabilityCutoff );		
 		
 		return massShiftProbabilities;
 	}
+	
+	public Map<BigDecimal, Double> getIsotopMassShiftProbabilities( Collection< Peptide > peptides, Integer charge ) throws Exception {
+		return getIsotopMassShiftProbabilities( peptides, charge, null );
+	}
 
-	public Map<BigDecimal, Double> getIsotopMassShiftProbabilities( Peptide peptide, Integer charge ) throws Exception {
+
+	public Map<BigDecimal, Double> getIsotopMassShiftProbabilities( Peptide peptide, Integer charge, Double probabilityCutoff ) throws Exception {
 		Collection< Peptide > peptides = new HashSet<>();
 		peptides.add( peptide );
 		
-		return getIsotopMassShiftProbabilities( peptides, charge );
+		return getIsotopMassShiftProbabilities( peptides, charge, probabilityCutoff );
+	}
+	
+	public Map<BigDecimal, Double> getIsotopMassShiftProbabilities( Peptide peptide, Integer charge ) throws Exception {
+		return getIsotopMassShiftProbabilities( peptide, charge, null );
 	}
 	
 	
-	private void processCarbon( Map< Atom, Integer > atomCount, Map<BigDecimal, Double> massShiftProbabilities) {
+	private void processCarbon( Map< Atom, Integer > atomCount, Map<BigDecimal, Double> massShiftProbabilities, double probabilityCutoff) {
 		
 		if( atomCount.get( AtomUtils.ATOM_HYDROGEN ) == null || atomCount.get( AtomUtils.ATOM_HYDROGEN ) == 0 ) {
-			processHydrogen( 1.0, getBigDecimal( (double)0.0 ), atomCount, massShiftProbabilities );
+			processHydrogen( 1.0, getBigDecimal( (double)0.0 ), atomCount, massShiftProbabilities, probabilityCutoff );
 			return;
 		}
 		
@@ -158,20 +171,20 @@ public class IsotopeAbundanceCalculator {
 			
 			double carbonProbability = getProbability(	carbonAtomIsotopeShifts, atomCount.get( AtomUtils.ATOM_CARBON ), carbonMassShiftProbability );
 			
-			if( carbonProbability < _PROBABILITY_CUTOFF ) continue;
+			if( carbonProbability < probabilityCutoff ) continue;
 			
 			BigDecimal totalCarbonMassShift = carbonMassShift.multiply( getBigDecimal( (double)carbonAtomIsotopeShifts) );				
 				
 			// now process Hydrogen
-			processHydrogen( carbonProbability, totalCarbonMassShift, atomCount, massShiftProbabilities );
+			processHydrogen( carbonProbability, totalCarbonMassShift, atomCount, massShiftProbabilities, probabilityCutoff );
 				
 		}
 	}
 	
-	private void processHydrogen( double currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount,  Map<BigDecimal, Double> massShiftProbabilities ) {
+	private void processHydrogen( double currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount,  Map<BigDecimal, Double> massShiftProbabilities, double probabilityCutoff ) {
 		
 		if( atomCount.get( AtomUtils.ATOM_HYDROGEN ) == null || atomCount.get( AtomUtils.ATOM_HYDROGEN ) == 0 ) {
-			processNitrogen( currentProbability, currentMassShift, atomCount, massShiftProbabilities );
+			processNitrogen( currentProbability, currentMassShift, atomCount, massShiftProbabilities, probabilityCutoff );
 			return;
 		}
 		
@@ -187,18 +200,18 @@ public class IsotopeAbundanceCalculator {
 				
 			hydrogenProbability = hydrogenProbability * currentProbability;
 			
-			if( hydrogenProbability < _PROBABILITY_CUTOFF ) continue;
+			if( hydrogenProbability < probabilityCutoff ) continue;
 			
 			// now process Nitrogen
-			processNitrogen( hydrogenProbability, totalMassShift, atomCount, massShiftProbabilities );
+			processNitrogen( hydrogenProbability, totalMassShift, atomCount, massShiftProbabilities, probabilityCutoff );
 		}
 	}
 	
 	
-	private void processNitrogen( double currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount, Map<BigDecimal, Double> massShiftProbabilities ) {
+	private void processNitrogen( double currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount, Map<BigDecimal, Double> massShiftProbabilities, double probabilityCutoff ) {
 		
 		if( atomCount.get( AtomUtils.ATOM_NITROGEN ) == null || atomCount.get( AtomUtils.ATOM_NITROGEN ) == 0 ) {
-			processOxygen( currentProbability, currentMassShift, atomCount, massShiftProbabilities );
+			processOxygen( currentProbability, currentMassShift, atomCount, massShiftProbabilities, probabilityCutoff );
 			return;
 		}
 		
@@ -214,19 +227,19 @@ public class IsotopeAbundanceCalculator {
 				
 			nitrogenProbability = nitrogenProbability * currentProbability;
 			
-			if( nitrogenProbability < _PROBABILITY_CUTOFF ) continue;
+			if( nitrogenProbability < probabilityCutoff ) continue;
 			
 			// now process Oxygen
-			processOxygen( nitrogenProbability, totalMassShift, atomCount, massShiftProbabilities );
+			processOxygen( nitrogenProbability, totalMassShift, atomCount, massShiftProbabilities, probabilityCutoff );
 				
 		}
 	}
 	
 	
-	private void processOxygen( double currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount, Map<BigDecimal, Double> massShiftProbabilities ) {
+	private void processOxygen( double currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount, Map<BigDecimal, Double> massShiftProbabilities, double probabilityCutoff ) {
 		
 		if( atomCount.get( AtomUtils.ATOM_OXYGEN ) == null || atomCount.get( AtomUtils.ATOM_OXYGEN ) == 0 ) {
-			processSulfur( currentProbability, currentMassShift, atomCount, massShiftProbabilities );
+			processSulfur( currentProbability, currentMassShift, atomCount, massShiftProbabilities, probabilityCutoff );
 			return;
 		}
 		
@@ -246,7 +259,7 @@ public class IsotopeAbundanceCalculator {
 								
 			double totalProbability1 = oxygenProbability1 * currentProbability;
 
-			if( totalProbability1 < _PROBABILITY_CUTOFF ) continue;
+			if( totalProbability1 < probabilityCutoff ) continue;
 			
 			for( int oxygenAtomIsotopeShifts2 = 0; oxygenAtomIsotopeShifts2 <= atomCount.get( AtomUtils.ATOM_OXYGEN ) - oxygenAtomIsotopeShifts1; oxygenAtomIsotopeShifts2++ ) {		
 					
@@ -257,21 +270,17 @@ public class IsotopeAbundanceCalculator {
 				BigDecimal totalMassShift2 = totalOxygenMassShift2.add( totalMassShift1 );
 				double totalProbability2 = totalProbability1 * oxygenProbability2;
 				
-				if( totalProbability2 < _PROBABILITY_CUTOFF ) continue;
+				if( totalProbability2 < probabilityCutoff ) continue;
 				
 				// now process Sulfur
-				processSulfur( totalProbability2, totalMassShift2, atomCount, massShiftProbabilities );
+				processSulfur( totalProbability2, totalMassShift2, atomCount, massShiftProbabilities, probabilityCutoff );
 					
-
-				// add to massShiftProbabilities
-				//addToMassShiftProbabilities( totalProbability, totalMassShift, massShiftProbabilities, 30 );
-
 			}
 		}
 	}
 	
 	
-	private void processSulfur( double currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount, Map<BigDecimal, Double> massShiftProbabilities ) {
+	private void processSulfur( double currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount, Map<BigDecimal, Double> massShiftProbabilities, double probabilityCutoff ) {
 		
 		// the element we're processing
 		Atom thisElement = AtomUtils.ATOM_SULFUR;
@@ -303,7 +312,7 @@ public class IsotopeAbundanceCalculator {
 								
 			double totalProbability1 = sulfurProbability1 * currentProbability;
 				
-			if( totalProbability1 < _PROBABILITY_CUTOFF ) continue;
+			if( totalProbability1 < probabilityCutoff ) continue;
 			
 			for( int sulfurAtomIsotopeShifts2 = 0; sulfurAtomIsotopeShifts2 <= atomCount.get( thisElement ) - sulfurAtomIsotopeShifts1; sulfurAtomIsotopeShifts2++ ) {		
 					
@@ -314,7 +323,7 @@ public class IsotopeAbundanceCalculator {
 				BigDecimal totalMassShift2 = totalSulfurMassShift2.add( totalMassShift1 );
 				double totalProbability2 = totalProbability1 * sulfurProbability2;
 				
-				if( totalProbability2 < _PROBABILITY_CUTOFF ) continue;
+				if( totalProbability2 < probabilityCutoff ) continue;
 				
 				for( int sulfurAtomIsotopeShifts3 = 0; sulfurAtomIsotopeShifts3 <= atomCount.get( thisElement ) - ( sulfurAtomIsotopeShifts1 + sulfurAtomIsotopeShifts2 ); sulfurAtomIsotopeShifts3++ ) {		
 					
@@ -325,7 +334,7 @@ public class IsotopeAbundanceCalculator {
 					BigDecimal totalMassShift3 = totalSulfurMassShift3.add( totalMassShift2 );
 					double totalProbability3 = totalProbability2 * sulfurProbability3;
 
-					if( totalProbability3 < _PROBABILITY_CUTOFF ) continue;
+					if( totalProbability3 < probabilityCutoff ) continue;
 					
 					// add to massShiftProbabilities
 					addToMassShiftProbabilities( totalProbability3, totalMassShift3, massShiftProbabilities, 10 );
