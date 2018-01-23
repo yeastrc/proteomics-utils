@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +16,14 @@ import org.yeastrc.proteomics.peptide.atom.Atom;
 import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 import org.apache.commons.math3.util.ArithmeticUtils;
 
+/**
+ * A tool to get the predicted isotope distribution for one or more peptides. Should probably
+ * be written using recursion instead of a chain of calls to separate methods for each
+ * element... But writing it this way seemed less error prone.
+ * 
+ * @author mriffle
+ *
+ */
 public class IsotopeAbundanceCalculator {
 
 	private static final IsotopeAbundanceCalculator _INSTANCE = new IsotopeAbundanceCalculator();
@@ -91,18 +101,18 @@ public class IsotopeAbundanceCalculator {
 	}
 	
 	/**
-	 * Get a list of isotopic mass shifts (and associated probabilities) for this peptide, which are mass differences compared to the
+	 * Get a list of neutral charge (not divided by charge) isotopic mass shifts (and associated probabilities) for these peptides, which are mass differences compared to the
 	 * monoisotopic mass of this peptide. If the peptide contains a stable isotope label, no isotopics for the labeled element
 	 * will be considered--the stable isotopic label is already used when calculating the monoisotopic mass for the peptide, and it
 	 * is assumed that all atoms of the labeled element are labeled.
 	 * 
-	 * @param peptide
-	 * @param charge
-	 * @param limit
+	 * @param peptides A collection of peptides we are processing which should be part of the same ion (e.g. a pair of cross-linked peptides)
+	 * @param charge The charge of the identified ion (so that we may add the appropriate number of extra Hydrogens into the calculation) Note
+	 * 				 that the returned values are NOT divided by this value.
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<BigDecimal, Double> getIsotopMassShiftProbabilities( Peptide peptide, Integer charge, int limit ) throws Exception {
+	public Map<BigDecimal, Double> getIsotopMassShiftProbabilities( Collection< Peptide > peptides, Integer charge ) throws Exception {
 		
 		if( charge != null && charge < 0 ) {
 			throw new Exception( "Charge must be >= 0." );
@@ -113,7 +123,7 @@ public class IsotopeAbundanceCalculator {
 		Map<BigDecimal, Double> massShiftProbabilities = new HashMap<>();
 		
 		// get the count for each atom for the entire peptide
-		Map< Atom, Integer > atomCount = getAtomCountForPeptide( peptide );
+		Map< Atom, Integer > atomCount = getAtomCountForPeptides( peptides );
 
 		if( charge != null ) {
 			if( !atomCount.containsKey( AtomUtils.ATOM_HYDROGEN ) )
@@ -126,14 +136,7 @@ public class IsotopeAbundanceCalculator {
 			System.out.println( "\t\t" + a.getSymbol() + ":" + atomCount.get( a ) );
 		}
 		
-		/*
-		 * If peptide has any stable isotope labels, remove that element from the atomCount map, since there will
-		 * not be any isotope-based mass shifts for that element. The stable isotope label is already used when
-		 * calculating the monoisotopic mass of the peptide, and this method only returns differences from that
-		 * monoisotopic mass.
-		 */
-		if( peptide.getLabel() != null )
-			atomCount.remove( peptide.getLabel().getLabeledAtom() );
+
 
 		
 		// start with carbon
@@ -146,7 +149,12 @@ public class IsotopeAbundanceCalculator {
 		return massShiftProbabilities;
 	}
 
-	
+	public Map<BigDecimal, Double> getIsotopMassShiftProbabilities( Peptide peptide, Integer charge ) throws Exception {
+		Collection< Peptide > peptides = new HashSet<>();
+		peptides.add( peptide );
+		
+		return getIsotopMassShiftProbabilities( peptides, charge );
+	}
 	
 	
 	private void processCarbon( Map< Atom, Integer > atomCount, Map<BigDecimal, Double> massShiftProbabilities) {
@@ -374,30 +382,37 @@ public class IsotopeAbundanceCalculator {
 	 * @param peptide
 	 * @return
 	 */
-	private Map< Atom, Integer > getAtomCountForPeptide( Peptide peptide ) throws Exception {
+	private Map< Atom, Integer > getAtomCountForPeptides( Collection<Peptide> peptides ) throws Exception {
 		
 		Map< Atom, Integer > atomCountMap = new HashMap<>();
 		
-		String s = peptide.getSequence();
-		
-		for (int i = 0; i < s.length(); i++){
+		for( Peptide peptide : peptides ) {
+			String s = peptide.getSequence();
 			
-			AminoAcid residue = AminoAcidUtils.getAminoAcidBySymbol( s.charAt(i) );
-			Map<Atom, Integer> residueAtomCount = residue.getParsedAtomCount();
-			
-			for( Atom atom : residueAtomCount.keySet() ) {
+			for (int i = 0; i < s.length(); i++){
 				
-				if( !atomCountMap.containsKey( atom ) )
-					atomCountMap.put( atom, 0 );
+				AminoAcid residue = AminoAcidUtils.getAminoAcidBySymbol( s.charAt(i) );
+				Map<Atom, Integer> residueAtomCount = residue.getParsedAtomCount();
 				
-				atomCountMap.put( atom, atomCountMap.get( atom ) + residueAtomCount.get( atom ) );
-				
+				for( Atom atom : residueAtomCount.keySet() ) {
+					
+					// do not add atoms for labeled elements as these cannot be mass shifted
+					if( peptide.getLabel() != null )
+						if( peptide.getLabel().getLabeledAtom().equals( atom ) )
+							continue;
+					
+					if( !atomCountMap.containsKey( atom ) )
+						atomCountMap.put( atom, 0 );
+					
+					atomCountMap.put( atom, atomCountMap.get( atom ) + residueAtomCount.get( atom ) );
+					
+				}
 			}
+	
+			// remove a H2O for each bond between amino acids.
+			atomCountMap.put( AtomUtils.ATOM_OXYGEN, atomCountMap.get( AtomUtils.ATOM_OXYGEN ) - ( s.length() - 1 ) );
+			atomCountMap.put( AtomUtils.ATOM_HYDROGEN, atomCountMap.get( AtomUtils.ATOM_HYDROGEN ) - ( ( s.length() - 1 ) * 2 ) );
 		}
-
-		// remove a H2O for each bond between amino acids.
-		atomCountMap.put( AtomUtils.ATOM_OXYGEN, atomCountMap.get( AtomUtils.ATOM_OXYGEN ) - ( s.length() - 1 ) );
-		atomCountMap.put( AtomUtils.ATOM_HYDROGEN, atomCountMap.get( AtomUtils.ATOM_HYDROGEN ) - ( ( s.length() - 1 ) * 2 ) );
 
 		
 		return atomCountMap;
