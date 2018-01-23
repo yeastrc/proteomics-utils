@@ -30,33 +30,64 @@ public class IsotopeAbundanceCalculator {
 	/**
 	 * A map of atom => mass shift (vs/ monoisotopic) => probability of observing this mass shift
 	 */
-	private static final Map< Atom, Map<BigDecimal, BigDecimal>> _ATOMIC_MASS_SHIFT_PROBABILITIES;
+	private static final Map< Atom, List<BigDecimal>> _ATOMIC_MASS_SHIFT_PROBABILITIES;
+	private static final Map< Atom, List<BigDecimal>> _ATOMIC_MASS_SHIFT_MASS_CHANGES;
 	
 	static {
 	
 		// from https://chemistry.sciences.ncsu.edu/msf/pdf/IsotopicMass_NaturalAbundance.pdf
 		
 		_ATOMIC_MASS_SHIFT_PROBABILITIES = new HashMap<>();
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES = new HashMap<>();
 		
 		
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.put( AtomUtils.ATOM_CARBON, new HashMap<>() );
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_CARBON ).put( getBigDecimal( 1.003355 ), getBigDecimal( 0.0107 ) );	// 13C
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.put( AtomUtils.ATOM_CARBON, new ArrayList<>() );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.put( AtomUtils.ATOM_CARBON, new ArrayList<>() );
 		
-		
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.put( AtomUtils.ATOM_HYDROGEN, new HashMap<>() );
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_HYDROGEN ).put( getBigDecimal( 1.006277 ), getBigDecimal( 0.000115 ) );	// 2H
-		
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.put( AtomUtils.ATOM_NITROGEN, new HashMap<>() );
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_NITROGEN ).put( getBigDecimal( 0.997035 ), getBigDecimal( 0.00368 ) );	// 15N
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.put( AtomUtils.ATOM_HYDROGEN, new ArrayList<>() );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.put( AtomUtils.ATOM_HYDROGEN, new ArrayList<>() );
 
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.put( AtomUtils.ATOM_OXYGEN, new HashMap<>() );
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_OXYGEN ).put( getBigDecimal( 1.004217 ), getBigDecimal( 0.00038 ) );	// 17O
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_OXYGEN ).put( getBigDecimal( 2.004245 ), getBigDecimal( 0.00205 ) );	// 18O
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.put( AtomUtils.ATOM_NITROGEN, new ArrayList<>() );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.put( AtomUtils.ATOM_NITROGEN, new ArrayList<>() );
+		
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.put( AtomUtils.ATOM_OXYGEN, new ArrayList<>() );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.put( AtomUtils.ATOM_OXYGEN, new ArrayList<>() );
+		
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.put( AtomUtils.ATOM_SULFUR, new ArrayList<>() );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.put( AtomUtils.ATOM_SULFUR, new ArrayList<>() );
+		
+		
+		/* 13C */
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_CARBON ).add( getBigDecimal( 0.0107 ) );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_CARBON ).add( getBigDecimal( 1.003355 ) );
+		
+		/* 2H */
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_HYDROGEN ).add( getBigDecimal( 0.000115 ) );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_HYDROGEN ).add( getBigDecimal( 1.006277 ) );
+		
+		/* 15N */
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_NITROGEN ).add( getBigDecimal( 0.00368 ) );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_NITROGEN ).add( getBigDecimal( 0.997035 ) );
 
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.put( AtomUtils.ATOM_SULFUR, new HashMap<>() );
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_SULFUR ).put( getBigDecimal( 0.999387 ), getBigDecimal( 0.0076 ) );	// 33S
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_SULFUR ).put( getBigDecimal( 1.995796 ), getBigDecimal( 0.0429 ) );	// 34S
-		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_SULFUR ).put( getBigDecimal( 3.99501 ), getBigDecimal( 0.0002 ) );	// 36S
+		/* 17O */
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_OXYGEN ).add( getBigDecimal( 0.00038 ) );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_OXYGEN ).add( getBigDecimal( 1.004217 ) );
+
+		/* 18O */
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_OXYGEN ).add( getBigDecimal( 0.00205 ) );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_OXYGEN ).add( getBigDecimal( 2.004245 ) );
+
+		/* 33S */
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_SULFUR ).add( getBigDecimal( 0.0076 ) );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_SULFUR ).add( getBigDecimal( 0.999387 ) );
+
+		/* 34S */
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_SULFUR ).add( getBigDecimal( 0.0429 ) );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_SULFUR ).add( getBigDecimal( 1.995796) );
+
+		/* 36S */
+		_ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_SULFUR ).add( getBigDecimal( 0.0002 ) );
+		_ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_SULFUR ).add( getBigDecimal( 3.99501 ) );
 				
 	}
 	
@@ -89,182 +120,159 @@ public class IsotopeAbundanceCalculator {
 		atomList.addAll( atomCount.keySet() );
 		
 		
-		processElementInList( atomList, atomCount, new Integer( 0 ), getBigDecimal( 1.0 ), getBigDecimal( 0.0 ), massShiftProbabilities, limit );
+		// start with carbon
+		processCarbon( atomCount, massShiftProbabilities );		
+
 		
 		System.out.println( "\tEnding getIsotopMassShiftProbabilities().\n\n" );
 
 		
 		return massShiftProbabilities;
 	}
-	
-	/**
-	 * Use recursion
-	 * 
-	 * @param atomList
-	 * @param index
-	 * @param massShiftProbabilities
-	 * @param currentLowestProbability
-	 */
-	private void processElementInList( 	List<Atom> atomList,
-									Map< Atom, Integer > atomCount,
-									Integer index,
-									BigDecimal currentProbability,
-									BigDecimal currentMassShift,
-									Collection<IsotopeMassShiftProbability> massShiftProbabilities,
-									int limit
-								 ) {
-		
-		System.out.println( "\n\t\tStarting processElementInList()." );
-
-		
-		Atom atom = atomList.get( index );
-		
-		System.out.println( "\t\t\tatom: " + atom.getSymbol() );
-
-		
-		BigDecimal probabilitySumForElement = getTotalProbabilityForAllIsotopesForElement( _ATOMIC_MASS_SHIFT_PROBABILITIES.get( atom ) );
-		System.out.println( "\t\t\tprobabilitySumForElement: " + probabilitySumForElement );
-
-		
-		// iterate over number of times this element exists in this peptide
-		for( int numberOfAtomsWithMassDiff = 0; numberOfAtomsWithMassDiff <= atomCount.get( atom ); numberOfAtomsWithMassDiff++ ) {
-						
-			// get the exact probability of this number of atoms having any isotope mass shift
-			double p = getProbability( numberOfAtomsWithMassDiff, atomCount.get( atom ), probabilitySumForElement.doubleValue() );
-			
-			//System.out.println( "\t\t\tp: " + p );
-			
-			BigDecimal probabilityOfAnyMassShiftForElement = getBigDecimal( p );
-			BigDecimal probabilityOfNoMassShiftForElement = getBigDecimal( 1.0 ).subtract( probabilityOfAnyMassShiftForElement );
-			
-			//System.out.println( "\t\t\tprobabilityOfAnyMassShiftForElement: " + probabilityOfAnyMassShiftForElement );
-			//System.out.println( "\t\t\tprobabilityOfNoMassShiftForElement: " + probabilityOfNoMassShiftForElement );
-
-			
-			BigDecimal cumulativeProbabilityForAnyMassShift = currentProbability.multiply( probabilityOfAnyMassShiftForElement );
-			BigDecimal cumulativeProbabilityForNoMassShift = currentProbability.multiply( probabilityOfNoMassShiftForElement );
-
-			//System.out.println( "\t\t\tcumulativeProbabilityForAnyMassShift: " + cumulativeProbabilityForAnyMassShift );
-			//System.out.println( "\t\t\tcumulativeProbabilityForNoMassShift: " + cumulativeProbabilityForNoMassShift );
-
-			
-			
-			if( numberOfAtomsWithMassDiff == 0 ) {
-				
-				// no need to go on: we're below the probability cutoff
-				if( cumulativeProbabilityForNoMassShift.compareTo( _PROBABILITY_CUTOFF ) < 0 ) {
-					continue;
-				}
-				
-				// no need to continue this further if current list is full and minimum probability is greater than this
-				if( massShiftProbabilities.size() >= limit && getCurrentLowestProbability( massShiftProbabilities ).compareTo( cumulativeProbabilityForNoMassShift ) > 0 )
-					continue;
-				
-				// if we're at the end of the element list, we can add this to our master list
-				if( index >= atomList.size() - 1 ) {
-					addToMassShiftProbabilities( cumulativeProbabilityForNoMassShift, currentMassShift, massShiftProbabilities, limit );
-					continue;
-				}
-				
-				// process the next element
-				processElementInList( atomList, atomCount, index + 1, cumulativeProbabilityForNoMassShift, currentMassShift, massShiftProbabilities, limit );
-				continue;				
-			}
-			
-			
-			// no need to go on: we're below the probability cutoff
-			if( cumulativeProbabilityForAnyMassShift.compareTo( _PROBABILITY_CUTOFF ) < 0 ) {
-				continue;
-			}
-			
-			// no need to continue this further if current list is full and minimum probability is greater than this
-			if( massShiftProbabilities.size() >= limit && getCurrentLowestProbability( massShiftProbabilities ).compareTo( cumulativeProbabilityForAnyMassShift ) > 0 )
-				continue;
-			
-			// process all combinations of mass shifts for this element and this number of mass shifts
-			
-			List<BigDecimal> massShiftsForElement = new ArrayList<>();
-			massShiftsForElement.addAll( _ATOMIC_MASS_SHIFT_PROBABILITIES.get( atom ).keySet() );
-			
-			processElementMassShiftsForCount( numberOfAtomsWithMassDiff, 0, massShiftsForElement, atomList, atomCount, index, currentProbability, currentMassShift, massShiftProbabilities, limit);			
-			
-
-		}// end iterating over number of mass modifications for this elements' atoms
-		
-		System.out.println( "\t\tEnding processElementInList().\n\n" );
-
-		
-	}
 
 	
-	private void processElementMassShiftsForCount (
-			int numberOfAtomsWithMassShift,
-			int elementIsotopeIndex,
-			List<BigDecimal> massShiftsForElement,
-			List<Atom> atomList,
-			Map< Atom, Integer > atomCount,
-			Integer index,
-			BigDecimal currentProbability,
-			BigDecimal currentMassShift,
-			Collection<IsotopeMassShiftProbability> massShiftProbabilities,
-			int limit
-		 ) {
-
-		Atom thisElement = atomList.get( index );
-		BigDecimal thisMassShift = massShiftsForElement.get( elementIsotopeIndex );
-		BigDecimal thisIsotopeProbability = _ATOMIC_MASS_SHIFT_PROBABILITIES.get( thisElement ).get( thisMassShift );
+	
+	
+	private void processCarbon( Map< Atom, Integer > atomCount, Collection<IsotopeMassShiftProbability> massShiftProbabilities ) {
 		
-		for( int count = 0; count <= numberOfAtomsWithMassShift; count++ ) {
+		BigDecimal carbonMassShift = _ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_CARBON ).get( 0 );
+		BigDecimal carbonMassShiftProbability = _ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_CARBON ).get( 0 );		
 			
-			double p = getProbability( count, atomCount.get( thisElement ), thisIsotopeProbability.doubleValue() );
-			BigDecimal probabilityOfCountShifts = getBigDecimal( p );
-
-			BigDecimal cumulativeProbability = currentProbability.multiply( probabilityOfCountShifts );
+		for( int carbonAtomIsotopeShifts = 0; carbonAtomIsotopeShifts <= atomCount.get( AtomUtils.ATOM_CARBON ); carbonAtomIsotopeShifts++ ) {
 			
-			// no need to go on: we're below the probability cutoff
-			if( cumulativeProbability.compareTo( _PROBABILITY_CUTOFF ) < 0 ) {
-				continue;
-			}
-			
-			// no need to continue this further if current list is full and minimum probability is greater than this
-			if( massShiftProbabilities.size() >= limit && getCurrentLowestProbability( massShiftProbabilities ).compareTo( cumulativeProbability ) > 0 )
-				continue;
-			
-			BigDecimal cumulativeMassShift = currentMassShift;
-			System.out.println( cumulativeMassShift );
-
-			if( count != 0 ) {
-				System.out.println( cumulativeMassShift );
+			BigDecimal carbonProbability = getBigDecimal( getProbability(	carbonAtomIsotopeShifts,
+																				atomCount.get( AtomUtils.ATOM_CARBON ),
+																				carbonMassShiftProbability.doubleValue()
+																			));
 				
-				cumulativeMassShift = cumulativeMassShift.multiply( getBigDecimal( (double)count ) );			
-				System.out.println( cumulativeMassShift );
-
+			BigDecimal totalCarbonMassShift = carbonMassShift.multiply( getBigDecimal( (double)carbonAtomIsotopeShifts) );
 				
-				cumulativeMassShift = cumulativeMassShift.add( thisMassShift );
-				System.out.println( cumulativeMassShift );
-			}
-
-
-			
-			// if we're on the last mass shift for this atom, add it to the list
-			if( elementIsotopeIndex >= massShiftsForElement.size() - 1 ) {
-
-				// we're also on the last element
-				if( index >= atomList.size() - 1 ) {
-					addToMassShiftProbabilities( cumulativeProbability, cumulativeMassShift, massShiftProbabilities, limit );
-					continue;
-				} else {
-					// move on to the next element
-					processElementInList( atomList, atomCount, index + 1, cumulativeProbability, cumulativeMassShift, massShiftProbabilities, limit );
-					continue;
-				}
-
-			}
-			
-			processElementMassShiftsForCount( numberOfAtomsWithMassShift, elementIsotopeIndex + 1, massShiftsForElement, atomList, atomCount, index, cumulativeProbability, cumulativeMassShift, massShiftProbabilities, limit);			
-		}		
+				
+			if( !passesCutoffTest( carbonProbability ) ) continue;		// no need to keep processing if we don't pass the cutoff
+				
+			// now process Hydrogen
+			processHydrogen( carbonProbability, totalCarbonMassShift, atomCount, massShiftProbabilities );
+				
+		}
 	}
 	
+	private void processHydrogen( BigDecimal currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount, Collection<IsotopeMassShiftProbability> massShiftProbabilities ) {
+		
+		BigDecimal hydrogenMassShift = _ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_HYDROGEN ).get( 0 );
+		BigDecimal hydrogenMassShiftProbability = _ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_HYDROGEN ).get( 0 );
+			
+		for( int hydrogenAtomIsotopeShifts = 0; hydrogenAtomIsotopeShifts <= atomCount.get( AtomUtils.ATOM_HYDROGEN ); hydrogenAtomIsotopeShifts++ ) {
+			
+			BigDecimal hydrogenProbability = getBigDecimal( getProbability(	hydrogenAtomIsotopeShifts,
+																				atomCount.get( AtomUtils.ATOM_HYDROGEN ),
+																				hydrogenMassShiftProbability.doubleValue()
+																			));
+				
+			BigDecimal totalHydrogenMassShift = hydrogenMassShift.multiply( getBigDecimal( (double)hydrogenAtomIsotopeShifts) );
+			BigDecimal totalMassShift = totalHydrogenMassShift.add( currentMassShift );
+				
+			hydrogenProbability = hydrogenProbability.multiply( currentProbability );
+				
+			if( !passesCutoffTest( hydrogenProbability ) ) continue;		// no need to keep processing if we don't pass the cutoff
+				
+			// now process Nitrogen
+			processNitrogen( hydrogenProbability, totalMassShift, atomCount, massShiftProbabilities );
+		}
+	}
+	
+	
+	private void processNitrogen( BigDecimal currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount, Collection<IsotopeMassShiftProbability> massShiftProbabilities ) {
+		
+		BigDecimal nitrogenMassShift = _ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_NITROGEN ).get( 0 );
+		BigDecimal nitrogenMassShiftProbability = _ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_NITROGEN ).get( 0 );
+			
+		for( int nitrogenAtomIsotopeShifts = 0; nitrogenAtomIsotopeShifts <= atomCount.get( AtomUtils.ATOM_NITROGEN ); nitrogenAtomIsotopeShifts++ ) {
+			
+			BigDecimal nitrogenProbability = getBigDecimal( getProbability(	nitrogenAtomIsotopeShifts,
+																				atomCount.get( AtomUtils.ATOM_NITROGEN ),
+																				nitrogenMassShiftProbability.doubleValue()
+																			));
+				
+			BigDecimal totalNitrogenMassShift = nitrogenMassShift.multiply( getBigDecimal( (double)nitrogenAtomIsotopeShifts) );
+			BigDecimal totalMassShift = totalNitrogenMassShift.add( currentMassShift );
+				
+			nitrogenProbability = nitrogenProbability.multiply( currentProbability );
+				
+			if( !passesCutoffTest( nitrogenProbability ) ) continue;		// no need to keep processing if we don't pass the cutoff
+				
+			// now process Oxygen
+			processOxygen( nitrogenProbability, totalMassShift, atomCount, massShiftProbabilities );
+				
+		}
+	}
+	
+	
+	private void processOxygen( BigDecimal currentProbability, BigDecimal currentMassShift, Map< Atom, Integer > atomCount, Collection<IsotopeMassShiftProbability> massShiftProbabilities ) {
+		
+			BigDecimal oxygenMassShift1 = _ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_OXYGEN ).get( 0 );
+			BigDecimal oxygenMassShiftProbability1 = _ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_OXYGEN ).get( 0 );
+			
+			BigDecimal oxygenMassShift2 = _ATOMIC_MASS_SHIFT_MASS_CHANGES.get( AtomUtils.ATOM_OXYGEN ).get( 1 );
+			BigDecimal oxygenMassShiftProbability2 = _ATOMIC_MASS_SHIFT_PROBABILITIES.get( AtomUtils.ATOM_OXYGEN ).get( 1 );
+			
+			
+			for( int oxygenAtomIsotopeShifts1 = 0; oxygenAtomIsotopeShifts1 <= atomCount.get( AtomUtils.ATOM_OXYGEN ); oxygenAtomIsotopeShifts1++ ) {
+			
+				BigDecimal oxygenProbability1 = getBigDecimal( getProbability(	oxygenAtomIsotopeShifts1,
+																				atomCount.get( AtomUtils.ATOM_OXYGEN ),
+																				oxygenMassShiftProbability1.doubleValue()
+																			));
+				
+				BigDecimal totalOxygenMassShift1 = oxygenMassShift1.multiply( getBigDecimal( (double)oxygenAtomIsotopeShifts1) );
+				BigDecimal totalMassShift = totalOxygenMassShift1.add( currentMassShift );
+								
+				BigDecimal totalProbability = oxygenProbability1.multiply( currentProbability );
+				
+				if( !passesCutoffTest( totalProbability ) ) continue;		// no need to keep processing if we don't pass the cutoff
+
+				
+				for( int oxygenAtomIsotopeShifts2 = 0; oxygenAtomIsotopeShifts2 <= atomCount.get( AtomUtils.ATOM_OXYGEN ) - oxygenAtomIsotopeShifts1; oxygenAtomIsotopeShifts2++ ) {
+
+					
+					
+					BigDecimal oxygenProbability2 = getBigDecimal( getProbability(	oxygenAtomIsotopeShifts2,
+							atomCount.get( AtomUtils.ATOM_OXYGEN ),
+							oxygenMassShiftProbability2.doubleValue()
+						));
+
+					BigDecimal totalOxygenMassShift2 = oxygenMassShift2.multiply( getBigDecimal( (double)oxygenAtomIsotopeShifts2) );
+					totalMassShift = totalOxygenMassShift2.add( totalMassShift );
+
+					totalProbability = totalProbability.multiply( oxygenProbability2 );
+
+					if( !passesCutoffTest( totalProbability ) ) continue;		// no need to keep processing if we don't pass the cutoff
+					
+					
+					// now process Oxygen
+					//processSulfur( oxygenProbability1, totalMassShift, atomCount, massShiftProbabilities );
+					
+					
+					// add to massShiftProbabilities
+					//addToMassShiftProbabilities( totalProbability, totalMassShift, massShiftProbabilities, 30 );
+
+				}
+				
+				
+
+			}
+		}
+	
+	
+	
+	
+	
+	
+	private boolean passesCutoffTest( BigDecimal probability ) {
+		if( probability.compareTo( _PROBABILITY_CUTOFF  ) < 0 )
+			return false;
+		
+		return true;
+	}
 	
 	
 	
