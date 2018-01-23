@@ -2,3 +2,6 @@
 bin
 /.project
 /.classpath
+/deploy/
+/classes/
+
