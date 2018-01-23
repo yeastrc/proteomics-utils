@@ -117,9 +117,7 @@ public class IsotopeAbundanceCalculator {
 		if( charge != null && charge < 0 ) {
 			throw new Exception( "Charge must be >= 0." );
 		}
-		
-		System.out.println( "\tStarting getIsotopMassShiftProbabilities()." );
-		
+				
 		Map<BigDecimal, Double> massShiftProbabilities = new HashMap<>();
 		
 		// get the count for each atom for the entire peptide
@@ -132,19 +130,8 @@ public class IsotopeAbundanceCalculator {
 			atomCount.put( AtomUtils.ATOM_HYDROGEN, atomCount.get( AtomUtils.ATOM_HYDROGEN ) + charge );
 		}
 		
-		for( Atom a : atomCount.keySet() ) {
-			System.out.println( "\t\t" + a.getSymbol() + ":" + atomCount.get( a ) );
-		}
-		
-
-
-		
 		// start with carbon
 		processCarbon( atomCount, massShiftProbabilities );		
-
-		
-		System.out.println( "\tEnding getIsotopMassShiftProbabilities().\n\n" );
-
 		
 		return massShiftProbabilities;
 	}
