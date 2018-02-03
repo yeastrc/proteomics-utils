@@ -1,6 +1,6 @@
 package org.yeastrc.proteomics.peptide.aminoacid;
 
-public class InvalidAminoAcidException extends Exception {
+public class InvalidAminoAcidException extends RuntimeException {
 
 	/**
 	 * 
