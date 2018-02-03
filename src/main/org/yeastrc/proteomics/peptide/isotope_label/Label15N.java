@@ -4,7 +4,7 @@ import org.yeastrc.proteomics.mass.MassUtils.MassType;
 import org.yeastrc.proteomics.peptide.atom.Atom;
 import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 
-public class Label15N implements IsotopeLabel {
+public class Label15N extends IsotopeLabel {
 
 	@Override
 	public String getName() {

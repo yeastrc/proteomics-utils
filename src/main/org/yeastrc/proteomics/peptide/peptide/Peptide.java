@@ -11,6 +11,51 @@ import org.yeastrc.proteomics.peptide.isotope_label.IsotopeLabel;
  */
 public class Peptide {
 	
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + ((modificationMasses == null) ? 0 : modificationMasses.hashCode());
+		result = prime * result + ((sequence == null) ? 0 : sequence.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Peptide other = (Peptide) obj;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (modificationMasses == null) {
+			if (other.modificationMasses != null)
+				return false;
+		} else if (!modificationMasses.equals(other.modificationMasses))
+			return false;
+		if (sequence == null) {
+			if (other.sequence != null)
+				return false;
+		} else if (!sequence.equals(other.sequence))
+			return false;
+		return true;
+	}
+
 	/**
 	 * The sequence of this peptide
 	 * @return
