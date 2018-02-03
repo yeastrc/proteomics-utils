@@ -17,7 +17,7 @@
     <property name="deploy" value="deploy" />
     <property name="config" value="resources" />
 
-	<property name="src" value="src" />
+	<property name="src" value="src/main" />
 	
 	
 
