@@ -1,7 +1,9 @@
 package org.yeastrc.proteomics.ion.utils;
 
 import org.yeastrc.proteomics.ion.object.FragmentIon;
+import org.yeastrc.proteomics.mass.MassUtils.MassType;
 import org.yeastrc.proteomics.peptide.atom.AtomUtils;
+import org.yeastrc.proteomics.peptide.peptide.PeptideMassCalculator;
 import org.yeastrc.proteomics.spectrum.ionmass.IonMassConstants;
 
 public class IonUtils {
@@ -31,10 +33,10 @@ public class IonUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static double calculateMass( FragmentIon ion, int massType ) throws Exception {
+	public static double calculateMass( FragmentIon ion, MassType massType ) throws Exception {
 		
 		// get mass of underlying residues
-		double mass = ion.getPeptide().getMassofResidues( massType );
+		double mass = PeptideMassCalculator.getInstance().getMassOfResiduesForPeptide(ion.getPeptide(), massType);
 		
 		// add mass of the protons, determined by the + charge
 		if( ion.getCharge() > 0 )

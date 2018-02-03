@@ -1,5 +1,6 @@
 package org.yeastrc.proteomics.peptide.isotope_label;
 
+import org.yeastrc.proteomics.mass.MassUtils.MassType;
 import org.yeastrc.proteomics.peptide.atom.Atom;
 
 public interface IsotopeLabel {
@@ -20,6 +21,6 @@ public interface IsotopeLabel {
 	 * Get the mass change resulting from the label (e.g., mass of a neutron)
 	 * @return
 	 */
-	public double getMassChange() throws Exception;
+	public double getMassChange( MassType massType );
 	
 }

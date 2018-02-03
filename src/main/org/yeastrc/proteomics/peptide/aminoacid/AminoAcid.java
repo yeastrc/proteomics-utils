@@ -2,6 +2,7 @@ package org.yeastrc.proteomics.peptide.aminoacid;
 
 import java.util.Map;
 
+import org.yeastrc.proteomics.mass.MassUtils.MassType;
 import org.yeastrc.proteomics.peptide.atom.Atom;
 
 public interface AminoAcid {
@@ -12,7 +13,7 @@ public interface AminoAcid {
 	 * @return The mass in daltons
 	 * @throws Exception If the mass type is invalid
 	 */
-	public double getMass( int type ) throws Exception;
+	public double getMass( MassType type );
 
 	
 	/**

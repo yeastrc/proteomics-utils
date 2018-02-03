@@ -1,5 +1,6 @@
 package org.yeastrc.proteomics.peptide.isotope_label;
 
+import org.yeastrc.proteomics.mass.MassUtils.MassType;
 import org.yeastrc.proteomics.peptide.atom.Atom;
 import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 
@@ -17,8 +18,17 @@ public class Label18O implements IsotopeLabel {
 	}
 
 	@Override
-	public double getMassChange() throws Exception {
-		return 2.00424567;
+	public double getMassChange( MassType type ) {
+		
+		if( type == null )
+			throw new IllegalArgumentException( "type cannot be null" );
+		
+		if( type == MassType.MONOISOTOPIC )
+			return 2.00424567;
+		else if( type == MassType.AVERAGE )
+			return 1.99976;
+		else
+			throw new IllegalArgumentException( "invalid mass type: " + type );
 	}
 
 }

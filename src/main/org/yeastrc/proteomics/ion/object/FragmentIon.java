@@ -1,6 +1,7 @@
 package org.yeastrc.proteomics.ion.object;
 
 import org.yeastrc.proteomics.ion.utils.IonUtils;
+import org.yeastrc.proteomics.mass.MassUtils.MassType;
 import org.yeastrc.proteomics.peptide.peptide.Peptide;
 
 public class FragmentIon {
@@ -11,7 +12,7 @@ public class FragmentIon {
 	 * @return
 	 * @throws Exception
 	 */
-	public double getMassToCharge( int massType ) throws Exception {
+	public double getMassToCharge( MassType massType ) throws Exception {
 		return IonUtils.calculateMass( this, massType ) / this.getCharge();
 	}
 	

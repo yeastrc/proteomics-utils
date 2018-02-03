@@ -1,4 +1,4 @@
-package org.yeastrc.proteomics.peptide.peptide;
+package org.yeastrc.proteomics.peptide.isotope_label;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -14,6 +14,7 @@ import org.yeastrc.proteomics.peptide.aminoacid.AminoAcid;
 import org.yeastrc.proteomics.peptide.aminoacid.AminoAcidUtils;
 import org.yeastrc.proteomics.peptide.atom.Atom;
 import org.yeastrc.proteomics.peptide.atom.AtomUtils;
+import org.yeastrc.proteomics.peptide.peptide.Peptide;
 import org.apache.commons.math3.util.ArithmeticUtils;
 
 /**

@@ -8,7 +8,7 @@ public class AminoAcidUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static AminoAcid getAminoAcidBySymbol( char residue ) throws Exception {
+	public static AminoAcid getAminoAcidBySymbol( char residue ) throws InvalidAminoAcidException {
 		AminoAcid aa = null;
 		
 		switch( residue ) {
@@ -47,7 +47,7 @@ public class AminoAcidUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static AminoAcid getAminoAcidByAbbreviation( String abbr ) throws Exception {
+	public static AminoAcid getAminoAcidByAbbreviation( String abbr ) throws InvalidAminoAcidException {
 		abbr = abbr.toLowerCase();
 		AminoAcid aa = null;
 		
@@ -87,7 +87,7 @@ public class AminoAcidUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static AminoAcid getAminoAcidByName( String name ) throws Exception {
+	public static AminoAcid getAminoAcidByName( String name ) throws InvalidAminoAcidException {
 		AminoAcid aa = null;
 		name = name.toLowerCase();
 		

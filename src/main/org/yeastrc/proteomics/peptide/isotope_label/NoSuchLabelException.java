@@ -1,6 +1,6 @@
 package org.yeastrc.proteomics.peptide.isotope_label;
 
-public class NoSuchLabelException extends Exception {
+public class NoSuchLabelException extends RuntimeException {
 
 	/**
 	 * 

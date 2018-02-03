@@ -1,13 +1,7 @@
 package org.yeastrc.proteomics.peptide.peptide;
 
-import java.util.Collection;
 import java.util.Map;
 
-import org.yeastrc.proteomics.modifications.types.Modification;
-import org.yeastrc.proteomics.peptide.aminoacid.AminoAcid;
-import org.yeastrc.proteomics.peptide.aminoacid.AminoAcidUtils;
-import org.yeastrc.proteomics.peptide.atom.Atom;
-import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 import org.yeastrc.proteomics.peptide.isotope_label.IsotopeLabel;
 
 /**
@@ -16,83 +10,6 @@ import org.yeastrc.proteomics.peptide.isotope_label.IsotopeLabel;
  *
  */
 public class Peptide {
-
-	/**
-	 * Get the mass of this peptide in daltons, including mods
-	 * @param massType Either MassUtils.MASS_TYPE_MONOISOTOPIC or MassUtils.MASS_TYPE_AVERAGE
-	 * @return
-	 * @throws Exception
-	 */
-	public double getMass( int massType ) throws Exception {
-
-		double mass = this.getMassofResidues( massType );
-		
-		// add mass of H2O
-		mass += AtomUtils.ATOM_OXYGEN.getMass( massType );
-		mass += 2 * AtomUtils.ATOM_HYDROGEN.getMass( massType );
-		
-		return mass;
-	}
-	
-	/**
-	 * Get the mass of the residues, including mods (same as peptide mass - mass of water)
-	 * @param massType Either MassUtils.MASS_TYPE_MONOISOTOPIC or MassUtils.MASS_TYPE_AVERAGE
-	 * @return
-	 * @throws Exception
-	 */
-	public double getMassofResidues( int massType ) throws Exception {
-		double mass = 0.0;
-		String s = this.getSequence();
-		
-		for (int i = 0; i < s.length(); i++){
-			
-			AminoAcid residue = AminoAcidUtils.getAminoAcidBySymbol( s.charAt(i) );
-			
-		    mass += residue.getMass( massType );
-		    
-		    // adjust mass for label if it is present
-		    if( this.getLabel() != null )
-		    	mass += this.getLabelMassModForResidue( residue, this.getLabel() );
-		}
-		
-		// add the mass of any modifications to this mass
-		if( this.getModifications() != null ) {
-			for( int p : this.getModifications().keySet() ) {
-				for( Modification mod : this.getModifications().get( p ) ) {
-					mass += mod.getMass( massType );
-				}
-			}			
-		}
-
-		return mass;
-	}
-
-	/**
-	 * Get the mass shift caused by the presence of a stable isotope label on one of the atoms
-	 * composing this residue.
-	 * 
-	 * @param residue
-	 * @param label
-	 * @return
-	 * @throws Exception
-	 */
-	private double getLabelMassModForResidue( AminoAcid residue, IsotopeLabel label ) throws Exception {
-	
-		double mass = 0.0;
-		
-		Atom labeledAtom = label.getLabeledAtom();
-		Integer atomCount = residue.getParsedAtomCount().get( labeledAtom );	// the number of labeled atoms
-		
-		// residue does not contained the labeled atom? weird.
-		if( atomCount == null || atomCount == 0 )
-			return 0.0;
-
-		
-		
-		mass = (double)atomCount * label.getMassChange();
-		
-		return mass;
-	}
 	
 	/**
 	 * The sequence of this peptide
@@ -108,29 +25,17 @@ public class Peptide {
 	 * and last residue is sequence.length.
 	 * @return
 	 */
-	public Map<Integer, Collection<Modification>> getModifications() {
-		return modifications;
-	}
-
-
-	/**
-	 * Set the modifications on this peptide
-	 * @param mods
-	 */
-	public void setModification( Map<Integer, Collection<Modification>> mods ) {
-		this.modifications = mods;
+	public Map<Integer, Double> getModificationMasses() {
+		return modificationMasses;
 	}
 		
 	public IsotopeLabel getLabel() {
 		return label;
 	}
 
-	public void setLabel(IsotopeLabel label) {
-		this.label = label;
-	}
 
 	private final String sequence;
-	private Map<Integer, Collection<Modification>> modifications;
+	private Map<Integer, Double> modificationMasses;
 	private IsotopeLabel label;
 	
 	/**
@@ -138,9 +43,34 @@ public class Peptide {
 	 * @param sequence
 	 * @param mods
 	 */
-	public Peptide( String sequence, Map<Integer, Collection<Modification>> mods ) {
+	public Peptide( String sequence, Map<Integer, Double> mods, IsotopeLabel label ) {
+		
+		if( !PeptideUtils.isValidPeptideModPositions( sequence,  mods.keySet() ) )
+			throw new IllegalArgumentException( "mod positions not in sequence" );
+		
 		this.sequence = sequence;
-		this.modifications = mods;
+		this.modificationMasses = mods;
+		this.label = label;
+	}
+	
+	public Peptide( String sequence, IsotopeLabel label ) {
+		
+		this.sequence = sequence;
+		this.label = label;
+	}
+	
+	/**
+	 * Get an instance of a peptide with the supplied attributes
+	 * @param sequence
+	 * @param mods
+	 */
+	public Peptide( String sequence, Map<Integer, Double> mods ) {
+		
+		if( !PeptideUtils.isValidPeptideModPositions( sequence,  mods.keySet() ) )
+			throw new IllegalArgumentException( "mod positions not in sequence" );
+		
+		this.sequence = sequence;
+		this.modificationMasses = mods;
 	}
 	
 	/**

@@ -1,6 +1,7 @@
 package org.yeastrc.proteomics.ion.object;
 
 import org.yeastrc.proteomics.ion.utils.IonUtils;
+import org.yeastrc.proteomics.mass.MassUtils.MassType;
 import org.yeastrc.proteomics.spectrum.object.Peak;
 import org.yeastrc.proteomics.spectrum.object.Spectrum;
 
@@ -76,7 +77,7 @@ public class FragmentIonSearcher {
 		this.matchType = matchType;
 	}
 	
-	public int getMassType() {
+	public MassType getMassType() {
 		return massType;
 	}
 
@@ -88,7 +89,7 @@ public class FragmentIonSearcher {
 	 * @param massType Either MassUtils.MASS_TYPE_MONOISOTOPIC or MassUtils.MASS_TYPE_AVERAGE
 	 * @return The searcher
 	 */
-	public static FragmentIonSearcher getInstance( double massTolerance, int matchType, int massType ) {
+	public static FragmentIonSearcher getInstance( double massTolerance, int matchType, MassType massType ) {
 		FragmentIonSearcher fis = new FragmentIonSearcher();
 		
 		fis.setMassTolerance( massTolerance);
@@ -101,5 +102,5 @@ public class FragmentIonSearcher {
 	
 	private double massTolerance;
 	private int matchType;
-	private int massType;
+	private MassType massType;
 }

@@ -1,16 +1,16 @@
 package org.yeastrc.proteomics.peptide.atom;
 
-import org.yeastrc.proteomics.mass.MassUtils;
+import org.yeastrc.proteomics.mass.MassUtils.MassType;
 
 public class Nitrogen extends Atom {
 
 	@Override
-	public double getMass(int massType) throws Exception {
+	public double getMass( MassType massType ) {
 
-		if( massType == MassUtils.MASS_TYPE_MONOISOTOPIC )
+		if( massType == MassType.MONOISOTOPIC )
 			return 14.0030740048;
 		
-		if( massType == MassUtils.MASS_TYPE_AVERAGE )
+		if( massType == MassType.AVERAGE )
 			return 14.0067;
 		
 		throw new IllegalArgumentException( "Invalid mass type." );
