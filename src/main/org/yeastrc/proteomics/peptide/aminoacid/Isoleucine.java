@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class Isoleucine implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 113.084064;
+			return 113.084064015;
 		
 		if( type == MassType.AVERAGE )
-			return 113.1594;
+			return 113.15764;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class Glycine implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 57.021464;
+			return 57.021463735;
 		
 		if( type == MassType.AVERAGE )
-			return 57.0519;
+			return 57.05132;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

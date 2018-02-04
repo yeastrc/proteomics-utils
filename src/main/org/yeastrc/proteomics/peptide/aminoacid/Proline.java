@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class Proline implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 97.052764;
+			return 97.052763875;
 		
 		if( type == MassType.AVERAGE )
-			return 97.1167;
+			return 97.11518;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class AsparticAcid implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 115.026943;
+			return 115.026943065;
 		
 		if( type == MassType.AVERAGE )
-			return 115.0886;
+			return 115.0874;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

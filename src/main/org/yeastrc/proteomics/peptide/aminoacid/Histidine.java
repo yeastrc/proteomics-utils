@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class Histidine implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 137.058912;
+			return 137.058911875;
 		
 		if( type == MassType.AVERAGE )
-			return 137.1411;
+			return 137.13928;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

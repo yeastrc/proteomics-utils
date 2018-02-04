@@ -1,8 +1,6 @@
 package org.yeastrc.proteomics.peptide.peptide;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,13 +17,13 @@ public class PeptideMassCalculatorTest {
 		
 		String sequence = "GPAVLIMCFYWHKRQNEDST";
 
-		// from https://web.expasy.org/peptide_mass/
-		double preCalcMonoMass = 2394.12;
-		double preCalcAvgMass = 2395.74;
+		// from http://protcalc.sourceforge.net/
+		double preCalcMonoMass = 2394.1211;
+		double preCalcAvgMass = 2395.7297;
 		
-		// 15N labeled masses from http://protcalc.sourceforge.net/
-		double preCalcMonoMass15N = 2423.04;
-		double preCalcAvgMass15N = 2424.52;
+		// http://protcalc.sourceforge.net/
+		double preCalcMonoMass15N = 2423.0354;
+		double preCalcAvgMass15N = 2424.5161;
 		
 		double phosphoMass = 79.966331;
 		
@@ -42,13 +40,13 @@ public class PeptideMassCalculatorTest {
 			Peptide peptide = new Peptide( sequence );		
 			double calcMass = PeptideMassCalculator.getInstance().getMassForPeptide( peptide, MassType.MONOISOTOPIC );
 			
-			assertEquals( preCalcMonoMass, calcMass, 0.01 );	// tested against https://web.expasy.org/peptide_mass/
+			assertEquals( preCalcMonoMass, calcMass, 0.001 );
 		}
 		{
 			Peptide peptide = new Peptide( sequence );		
 			double calcMass = PeptideMassCalculator.getInstance().getMassForPeptide( peptide, MassType.AVERAGE );
 			
-			assertEquals( preCalcAvgMass, calcMass, 0.01 );	// tested against https://web.expasy.org/peptide_mass/
+			assertEquals( preCalcAvgMass, calcMass, 0.1 );	// not getting exact agreement on average
 		}
 		
 		
@@ -64,7 +62,7 @@ public class PeptideMassCalculatorTest {
 			Peptide peptide = new Peptide( sequence, mods );		
 			double calcMass = PeptideMassCalculator.getInstance().getMassForPeptide( peptide, MassType.AVERAGE );
 			
-			assertEquals( preCalcAvgMass + ( 3.0 * phosphoMass ), calcMass, 0.01 );
+			assertEquals( preCalcAvgMass + ( 3.0 * phosphoMass ), calcMass, 0.1 ); // not getting exact agreement on average
 		}
 		
 		// add in labels

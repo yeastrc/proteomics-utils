@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class Lysine implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 128.094963;
+			return 128.094963050;
 		
 		if( type == MassType.AVERAGE )
-			return 128.1741;
+			return 128.17228;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

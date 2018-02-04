@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class Methionine implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 131.040485;
+			return 131.040484645;
 		
 		if( type == MassType.AVERAGE )
-			return 131.1986;
+			return 131.19606;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

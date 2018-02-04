@@ -16,10 +16,10 @@ public class Pyrrolysine implements AminoAcid {
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 255.15829;
+			return 237.14773;
 		
 		if( type == MassType.AVERAGE )
-			return 255.3172;
+			return 237.2982;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

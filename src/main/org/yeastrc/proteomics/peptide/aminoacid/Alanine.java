@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class Alanine implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 71.037114;
+			return 71.037113805;
 		
 		if( type == MassType.AVERAGE )
-			return 71.0788;
+			return 71.0779;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

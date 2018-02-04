@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class GlutamicAcid implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 129.042593;
+			return 129.042593135;
 		
 		if( type == MassType.AVERAGE )
-			return 129.1155;
+			return 129.11398;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

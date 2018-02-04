@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class Threonine implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 101.047679;
+			return 	101.047678505;
 		
 		if( type == MassType.AVERAGE )
-			return 101.1051;
+			return 101.10388;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}

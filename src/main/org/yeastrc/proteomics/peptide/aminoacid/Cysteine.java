@@ -11,15 +11,15 @@ import org.yeastrc.proteomics.peptide.atom.AtomUtils;
 public class Cysteine implements AminoAcid {
 
 	/**
-	 * Taken from http://en.wikipedia.org/wiki/Proteinogenic_amino_acid
+	 * Taken from http://proteomicsresource.washington.edu/protocols06/masses.php
 	 */
 	@Override
 	public double getMass(MassType type) {
 		if( type == MassType.MONOISOTOPIC )
-			return 103.009185;
+			return 103.009184505;
 		
 		if( type == MassType.AVERAGE )
-			return 103.1388;
+			return 103.1429;
 		
 		throw new IllegalArgumentException( "Did not get a valid mass type." );	
 	}
