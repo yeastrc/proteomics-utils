@@ -17,9 +17,9 @@ public class PeptideMassCalculatorTest {
 		
 		String sequence = "GPAVLIMCFYWHKRQNEDST";
 
-		// from http://protcalc.sourceforge.net/
-		double preCalcMonoMass = 2394.1211;
-		double preCalcAvgMass = 2395.7297;
+		// from http://proteomicsresource.washington.edu/cgi-bin/fragment.cgi
+		double preCalcMonoMass = 2394.124907;
+		double preCalcAvgMass = 2395.713660;
 		
 		// http://protcalc.sourceforge.net/
 		double preCalcMonoMass15N = 2423.0354;
@@ -40,13 +40,13 @@ public class PeptideMassCalculatorTest {
 			Peptide peptide = new Peptide( sequence );		
 			double calcMass = PeptideMassCalculator.getInstance().getMassForPeptide( peptide, MassType.MONOISOTOPIC );
 			
-			assertEquals( preCalcMonoMass, calcMass, 0.001 );
+			assertEquals( preCalcMonoMass, calcMass, 0.0001 );
 		}
 		{
 			Peptide peptide = new Peptide( sequence );		
 			double calcMass = PeptideMassCalculator.getInstance().getMassForPeptide( peptide, MassType.AVERAGE );
 			
-			assertEquals( preCalcAvgMass, calcMass, 0.1 );	// not getting exact agreement on average
+			assertEquals( preCalcAvgMass, calcMass, 0.0001 );	// not getting exact agreement on average
 		}
 		
 		
@@ -56,16 +56,17 @@ public class PeptideMassCalculatorTest {
 			Peptide peptide = new Peptide( sequence, mods );		
 			double calcMass = PeptideMassCalculator.getInstance().getMassForPeptide( peptide, MassType.MONOISOTOPIC );
 			
-			assertEquals( preCalcMonoMass + ( 3.0 * phosphoMass ), calcMass, 0.01 );
+			assertEquals( preCalcMonoMass + ( 3.0 * phosphoMass ), calcMass, 0.0001 );
 		}
 		{
 			Peptide peptide = new Peptide( sequence, mods );		
 			double calcMass = PeptideMassCalculator.getInstance().getMassForPeptide( peptide, MassType.AVERAGE );
 			
-			assertEquals( preCalcAvgMass + ( 3.0 * phosphoMass ), calcMass, 0.1 ); // not getting exact agreement on average
+			assertEquals( preCalcAvgMass + ( 3.0 * phosphoMass ), calcMass, 0.0001 ); // not getting exact agreement on average
 		}
 		
-		// add in labels
+		// add in labels -- these matches are less exact since I think http://protcalc.sourceforge.net/
+		// must use different rounding and/or estimations of natural abundance.
 		{
 			Peptide peptide = new Peptide( sequence, mods, label );		
 			double calcMass = PeptideMassCalculator.getInstance().getMassForPeptide( peptide, MassType.MONOISOTOPIC );
