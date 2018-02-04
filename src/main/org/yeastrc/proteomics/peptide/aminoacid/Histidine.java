@@ -50,9 +50,9 @@ public class Histidine implements AminoAcid {
 		Map<Atom,Integer> atomCount = new HashMap<>();
 		
 		atomCount.put( AtomUtils.ATOM_CARBON, 6 );
-		atomCount.put( AtomUtils.ATOM_HYDROGEN, 9 );
+		atomCount.put( AtomUtils.ATOM_HYDROGEN, 7 );
 		atomCount.put( AtomUtils.ATOM_NITROGEN, 3 );
-		atomCount.put( AtomUtils.ATOM_OXYGEN, 2 );
+		atomCount.put( AtomUtils.ATOM_OXYGEN, 1 );
 		
 		return Collections.unmodifiableMap( atomCount );
 	}

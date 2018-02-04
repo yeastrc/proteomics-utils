@@ -406,9 +406,9 @@ public class IsotopeAbundanceCalculator {
 				}
 			}
 	
-			// remove a H2O for each bond between amino acids.
-			atomCountMap.put( AtomUtils.ATOM_OXYGEN, atomCountMap.get( AtomUtils.ATOM_OXYGEN ) - ( s.length() - 1 ) );
-			atomCountMap.put( AtomUtils.ATOM_HYDROGEN, atomCountMap.get( AtomUtils.ATOM_HYDROGEN ) - ( ( s.length() - 1 ) * 2 ) );
+			// add H and OH onto atom counts N and C terms
+			atomCountMap.put( AtomUtils.ATOM_OXYGEN, atomCountMap.get( AtomUtils.ATOM_OXYGEN ) + 1 );
+			atomCountMap.put( AtomUtils.ATOM_HYDROGEN, atomCountMap.get( AtomUtils.ATOM_HYDROGEN ) + 2 );
 		}
 
 		

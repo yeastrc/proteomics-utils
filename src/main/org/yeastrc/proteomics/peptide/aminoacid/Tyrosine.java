@@ -50,9 +50,9 @@ public class Tyrosine implements AminoAcid {
 		Map<Atom,Integer> atomCount = new HashMap<>();
 		
 		atomCount.put( AtomUtils.ATOM_CARBON, 9 );
-		atomCount.put( AtomUtils.ATOM_HYDROGEN, 11 );
+		atomCount.put( AtomUtils.ATOM_HYDROGEN, 9 );
 		atomCount.put( AtomUtils.ATOM_NITROGEN, 1 );
-		atomCount.put( AtomUtils.ATOM_OXYGEN, 3 );
+		atomCount.put( AtomUtils.ATOM_OXYGEN, 2 );
 		
 		return Collections.unmodifiableMap( atomCount );
 	}

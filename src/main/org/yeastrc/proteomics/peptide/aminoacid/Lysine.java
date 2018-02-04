@@ -50,9 +50,9 @@ public class Lysine implements AminoAcid {
 		Map<Atom,Integer> atomCount = new HashMap<>();
 		
 		atomCount.put( AtomUtils.ATOM_CARBON, 6 );
-		atomCount.put( AtomUtils.ATOM_HYDROGEN, 14 );
+		atomCount.put( AtomUtils.ATOM_HYDROGEN, 12 );
 		atomCount.put( AtomUtils.ATOM_NITROGEN, 2 );
-		atomCount.put( AtomUtils.ATOM_OXYGEN, 2 );
+		atomCount.put( AtomUtils.ATOM_OXYGEN, 1 );
 		
 		return Collections.unmodifiableMap( atomCount );
 	}

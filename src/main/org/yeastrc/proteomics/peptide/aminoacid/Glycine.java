@@ -50,9 +50,9 @@ public class Glycine implements AminoAcid {
 		Map<Atom,Integer> atomCount = new HashMap<>();
 		
 		atomCount.put( AtomUtils.ATOM_CARBON, 2 );
-		atomCount.put( AtomUtils.ATOM_HYDROGEN, 5 );
+		atomCount.put( AtomUtils.ATOM_HYDROGEN, 3 );
 		atomCount.put( AtomUtils.ATOM_NITROGEN, 1 );
-		atomCount.put( AtomUtils.ATOM_OXYGEN, 2 );
+		atomCount.put( AtomUtils.ATOM_OXYGEN, 1 );
 		
 		return Collections.unmodifiableMap( atomCount );
 	}

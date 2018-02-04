@@ -50,9 +50,9 @@ public class Serine implements AminoAcid {
 		Map<Atom,Integer> atomCount = new HashMap<>();
 		
 		atomCount.put( AtomUtils.ATOM_CARBON, 3 );
-		atomCount.put( AtomUtils.ATOM_HYDROGEN, 7 );
+		atomCount.put( AtomUtils.ATOM_HYDROGEN, 5 );
 		atomCount.put( AtomUtils.ATOM_NITROGEN, 1 );
-		atomCount.put( AtomUtils.ATOM_OXYGEN, 3 );
+		atomCount.put( AtomUtils.ATOM_OXYGEN, 2 );
 		
 		return Collections.unmodifiableMap( atomCount );
 	}

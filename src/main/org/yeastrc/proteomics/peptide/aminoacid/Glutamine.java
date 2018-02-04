@@ -50,9 +50,9 @@ public class Glutamine implements AminoAcid {
 		Map<Atom,Integer> atomCount = new HashMap<>();
 		
 		atomCount.put( AtomUtils.ATOM_CARBON, 5 );
-		atomCount.put( AtomUtils.ATOM_HYDROGEN, 10 );
+		atomCount.put( AtomUtils.ATOM_HYDROGEN, 8 );
 		atomCount.put( AtomUtils.ATOM_NITROGEN, 2 );
-		atomCount.put( AtomUtils.ATOM_OXYGEN, 3 );
+		atomCount.put( AtomUtils.ATOM_OXYGEN, 2 );
 		
 		return Collections.unmodifiableMap( atomCount );
 	}

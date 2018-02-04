@@ -50,9 +50,9 @@ public class Isoleucine implements AminoAcid {
 		Map<Atom,Integer> atomCount = new HashMap<>();
 		
 		atomCount.put( AtomUtils.ATOM_CARBON, 6 );
-		atomCount.put( AtomUtils.ATOM_HYDROGEN, 13 );
+		atomCount.put( AtomUtils.ATOM_HYDROGEN, 11 );
 		atomCount.put( AtomUtils.ATOM_NITROGEN, 1 );
-		atomCount.put( AtomUtils.ATOM_OXYGEN, 2 );
+		atomCount.put( AtomUtils.ATOM_OXYGEN, 1 );
 		
 		return Collections.unmodifiableMap( atomCount );
 	}
