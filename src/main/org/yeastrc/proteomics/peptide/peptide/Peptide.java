@@ -121,7 +121,6 @@ public class Peptide {
 	/**
 	 * Get an instance of a peptide with the supplied attributes
 	 * @param sequence
-	 * @param mods
 	 */
 	public Peptide( String sequence ) {
 		this.sequence = sequence;
