@@ -4,4 +4,4 @@ bin
 /.classpath
 /deploy/
 /classes/
-
+/.idea/
