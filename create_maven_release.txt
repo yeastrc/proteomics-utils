@@ -1,1 +1,1 @@
-c:\apache-maven-3.6.1\bin\mvn install:install-file -DgroupId=org.yeastrc -DartifactId=proxl-import-api -Dversion=1.9.1 -Dfile=build\libs\proxl-import-api.jar -Dpackaging=jar -DgeneratePom=true -DlocalRepositoryPath=.  -DcreateChecksum=true
+c:\apache-maven-3.6.3\bin\mvn install:install-file -DgroupId=org.yeastrc -DartifactId=proteomics-utils -Dversion=1.0.0 -Dfile=build\libs\yrc-proteomics.jar -Dpackaging=jar -DgeneratePom=true -DlocalRepositoryPath=.  -DcreateChecksum=true
