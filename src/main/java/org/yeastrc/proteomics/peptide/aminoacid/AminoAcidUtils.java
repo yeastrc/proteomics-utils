@@ -34,6 +34,7 @@ public class AminoAcidUtils {
 			case 'Y' : aa = TYROSINE; break;
 			case 'V' : aa = VALINE; break;
 			case 'O' : aa = PYRROLYSINE; break;
+			case 'J' : aa = LEUCINEORISOLEUCINE; break;
 			default : throw new InvalidAminoAcidException( "Unknown amino acid residue: " + residue );
 		}
 		
@@ -74,6 +75,7 @@ public class AminoAcidUtils {
 			case "tyr" : aa = TYROSINE; break;
 			case "val" : aa = VALINE; break;
 			case "pyl" : aa = PYRROLYSINE; break;
+			case "xle" : aa = LEUCINEORISOLEUCINE; break;
 			default : throw new InvalidAminoAcidException( "Unknown amino acid abbreviation: " + abbr );
 		}
 		
@@ -114,6 +116,7 @@ public class AminoAcidUtils {
 			case "tyrosine" : aa = TYROSINE; break;
 			case "valine" : aa = VALINE; break;
 			case "pyrrolysine" : aa = PYRROLYSINE; break;
+			case "leucine or isoleucine" : aa = LEUCINEORISOLEUCINE; break;
 			default : throw new InvalidAminoAcidException( "Unknown amino acid abbreviation." );
 		}
 		
@@ -142,5 +145,5 @@ public class AminoAcidUtils {
 	public static final AminoAcid TYROSINE = new Tyrosine();
 	public static final AminoAcid VALINE = new Valine();
 	public static final AminoAcid PYRROLYSINE = new Pyrrolysine();
-	
+	public static final AminoAcid LEUCINEORISOLEUCINE = new LeucineOrIsoleucine();
 }
