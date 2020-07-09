@@ -69,7 +69,7 @@ public class AminoAcidUtils {
 			case "pro" : aa = PROLINE; break;
 			case "ser" : aa = SERINE; break;
 			case "thr" : aa = THREONINE; break;
-			case "seC" : aa = SELENOCYSTEINE; break;
+			case "sec" : aa = SELENOCYSTEINE; break;
 			case "trp" : aa = TRYPTOPHAN; break;
 			case "tyr" : aa = TYROSINE; break;
 			case "val" : aa = VALINE; break;
